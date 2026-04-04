@@ -7,13 +7,6 @@
   <link rel="stylesheet" href="shared-app.css">
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   <script src="shared-power.js"></script>
-  <style>
-    #plot {
-      position: relative;
-    }
-
-
-  </style>
 </head>
 <body>
   <main class="app">
@@ -32,8 +25,6 @@
     const { X_MIN, X_MAX, Y_MIN, Y_MAX } = shared;
     const ui = shared.getPowerUI("plot");
     const unovisHost = document.getElementById("uv");
-    const X_DOMAIN = [X_MIN, X_MAX];
-    const Y_DOMAIN = [Y_MIN, Y_MAX];
     const SAMPLE_STEPS = 1200;
     const EPS = 0.001;
     let chart;
@@ -74,8 +65,8 @@
       if (!chart) {
         chart = new XYContainer(unovisHost, {
           components: [xAxisAtZero, yAxisAtZero, leftLine, rightLine],
-          xDomain: X_DOMAIN,
-          yDomain: Y_DOMAIN,
+          xDomain: [X_MIN, X_MAX],
+          yDomain: [Y_MIN, Y_MAX],
           width,
           height,
         }, data);
