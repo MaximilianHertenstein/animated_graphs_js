@@ -132,7 +132,7 @@
   let uplot, a = 1, n = 2;
 
   function genData() {
-    const pts = 600;
+    const pts = 7000;
     const xs = [], ys = [];
     for (let i = 0; i <= pts; i++) {
       const x = -5 + (10 * i / pts);
@@ -154,7 +154,7 @@
     const axis  = 'rgba(255,255,255,0.55)';
     const axisLabel = 'rgba(255,255,255,0.8)';
     const zeroAxis = 'rgba(255,255,255,0.95)';
-    const fixedTicks = (u, scaleMin, scaleMax) => {
+    const fixedSplits = (u, axisIdx, scaleMin, scaleMax) => {
       const vals = [];
       for (let i = -5; i <= 5; i++) {
         if (i >= scaleMin && i <= scaleMax) vals.push(i);
@@ -164,6 +164,7 @@
     return {
       width: w,
       height: getPlotHeight(),
+      pxAlign: 0,
       padding: [12, 12, 0, 0],
       cursor: { show: true, drag: { x: false, y: false } },
       legend: { show: false },
@@ -199,31 +200,33 @@
           stroke: axisLabel,
           grid:  { stroke: grid, width: 0.5 },
           ticks: { show: true, stroke: axis, size: 6, width: 1 },
-          values: fixedTicks,
+          splits: fixedSplits,
+          values: (u, splits) => splits.map((v) => String(v)),
           font:  '13px monospace',
           space: 36,
           gap: 8,
           labelGap: 10,
-          labelSize: 0,
+          labelSize: 24,
         },
         {
           stroke: axisLabel,
           grid:  { stroke: grid, width: 0.5 },
           ticks: { show: true, stroke: axis, size: 6, width: 1 },
-          values: fixedTicks,
+          splits: fixedSplits,
+          values: (u, splits) => splits.map((v) => String(v)),
           font:  '13px monospace',
           size: 56,
           space: 36,
           gap: 8,
           labelGap: 10,
-          labelSize: 0,
+          labelSize: 40,
         }
       ],
       series: [
         {},
         {
           stroke: '#7F77DD',
-          width: 2.5,
+          width: 3,
           fill: 'transparent',
           spanGaps: false,
         }
