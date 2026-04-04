@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Power Function (Unovis)</title>
+  <link rel="stylesheet" href="shared-app.css">
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="shared-power.js"></script>
+  <style>
+    #plot {
+      position: relative;
+      overflow: hidden;
+      background-color: #121826;
+      background-image:
+        linear-gradient(to right, rgba(255, 255, 255, 0.18) 1px, transparent 1px),
+        linear-gradient(to top, rgba(255, 255, 255, 0.18) 1px, transparent 1px);
+      background-size: calc(100% / 10) 100%, 100% calc(100% / 10);
+      background-position: center center;
+    }
+
+    #plot::before,
+    #plot::after {
+      content: "";
+      position: absolute;
+      background: #f6f8fb;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    #plot::before {
+      left: 50%;
+      top: 0;
+      width: 2px;
+      height: 100%;
+      transform: translateX(-50%);
+    }
+
+    #plot::after {
+      left: 0;
+      top: 50%;
+      width: 100%;
+      height: 2px;
+      transform: translateY(-50%);
+    }
+
+    #uv {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+    }
+
+    #uv svg text {
+      fill: #d7dfeb;
+      font-size: 12px;
+    }
+
+    #uv svg .domain,
+    #uv svg .tick line {
+      stroke: #f6f8fb;
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="controls">
+      <div class="row"><label for="a">a</label><input id="a" type="range" min="-5" max="5" step="0.1" value="1"><output id="aOut">1.0</output></div>
+      <div class="row"><label for="n">n</label><input id="n" type="range" min="-4" max="8" step="1" value="2"><output id="nOut">2</output></div>
+    </section>
+    <div id="formula" class="formula">\(f(x)=1.0\cdot x^{2}\)</div>
+    <div id="plot" class="plot-surface"><div id="uv"></div></div>
+  </main>
+
+  <script type="module">
+    import { XYContainer, Line, Axis, AxisType } from "https://cdn.jsdelivr.net/npm/@unovis/ts@1.6.4/+esm";
+
+    const ui = window.PowerShared.getPowerUI("plot");
+    const unovisHost = document.getElementById("uv");
+    let chart;
+    const leftLine = new Line({
+      x: (d) => d.x,
+      y: (d) => d.yLeft,
+      color: "#5eead4",
+    });
+    const rightLine = new Line({
+      x: (d) => d.x,
+      y: (d) => d.yRight,
+      color: "#5eead4",
+    });
+
+    const xAxis = new Axis({
+      type: AxisType.X,
+      numTicks: 11,
+    });
+
+    const yAxis = new Axis({
+      type: AxisType.Y,
+      numTicks: 11,
+    });
+
+    function buildData(a, n) {
+      const eps = n < 0 ? 0.001 : 0;
+      return window.PowerShared.samplePoints(a, n, 1600, window.PowerShared.X_MIN, window.PowerShared.X_MAX)
+        .map((point) => {
+          const visibleY = window.PowerShared.isVisibleY(point.y) ? point.y : Number.NaN;
+          const onLeft = point.x < -eps;
+          const onRight = point.x > eps;
+
+          if (n < 0) {
+            return {
+              x: point.x,
+              yLeft: onLeft ? visibleY : Number.NaN,
+              yRight: onRight ? visibleY : Number.NaN,
+            };
+          }
+
+          return {
+            x: point.x,
+            yLeft: visibleY,
+            yRight: Number.NaN,
+          };
+        });
+    }
+
+    function render() {
+      const { a, n } = window.PowerShared.syncPowerUI(ui);
+      const data = buildData(a, n);
+
+      if (!chart) {
+        chart = new XYContainer(unovisHost, {
+          components: [leftLine, rightLine, xAxis, yAxis],
+          xDomain: [window.PowerShared.X_MIN, window.PowerShared.X_MAX],
+          yDomain: [window.PowerShared.Y_MIN, window.PowerShared.Y_MAX],
+          width: ui.plotEl.clientWidth,
+          height: ui.plotEl.clientHeight,
+        }, data);
+        return;
+      }
+
+      chart.setData(data);
+      chart.render();
+    }
+
+    window.PowerShared.bindPowerUI(ui, render, () => {
+      if (!chart) return;
+      chart.updateContainer({
+        width: ui.plotEl.clientWidth,
+        height: ui.plotEl.clientHeight,
+      });
+      chart.render();
+    });
+
+    render();
+  </script>
+</body>
+</html>
