@@ -15,7 +15,7 @@
       <div class="row"><label for="c">c</label><input id="c" type="range" min="-5" max="5" step="0.1" value="0"><output id="cOut">0.0</output></div>
     </section>
     <div id="formula" class="formula">\(f(x)=1.0\cdot 1.0^{x}+0.0\)</div>
-    <svg id="plot" class="plot-surface" viewBox="0 0 1000 700" preserveAspectRatio="none"></svg>
+    <svg id="plot" class="plot-surface" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid meet"></svg>
   </main>
 
   <script>
@@ -30,12 +30,16 @@
 
     const min = -5;
     const max = 5;
-    const W = 1000;
-    const H = 700;
     const p = 60;
 
-    const tx = (x) => p + ((x - min) / (max - min)) * (W - 2 * p);
-    const ty = (y) => H - p - ((y - min) / (max - min)) * (H - 2 * p);
+    const createSvgEl = (tag, attrs) => {
+      const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+      Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
+      return el;
+    };
+
+    const tx = (x, w) => p + ((x - min) / (max - min)) * (w - 2 * p);
+    const ty = (y, h) => h - p - ((y - min) / (max - min)) * (h - 2 * p);
 
     function render() {
       const a = parseFloat(aS.value);
@@ -49,28 +53,50 @@
         MathJax.typesetPromise([formula]).catch(() => {});
       }
 
-      let html = "";
+      const w = s.clientWidth || 800;
+      const h = s.clientHeight || 600;
+      s.setAttribute('viewBox', `0 0 ${w} ${h}`);
+      s.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+      s.replaceChildren();
+
       for (let i = -5; i <= 5; i++) {
-        html += `<line x1='${tx(i)}' y1='${p}' x2='${tx(i)}' y2='${H - p}' stroke='rgba(255,255,255,.15)'/>`;
-        html += `<line x1='${p}' y1='${ty(i)}' x2='${W - p}' y2='${ty(i)}' stroke='rgba(255,255,255,.15)'/>`;
+        s.appendChild(createSvgEl('line', {
+          x1: tx(i, w), y1: p, x2: tx(i, w), y2: h - p,
+          stroke: 'rgba(255,255,255,.15)'
+        }));
+        s.appendChild(createSvgEl('line', {
+          x1: p, y1: ty(i, h), x2: w - p, y2: ty(i, h),
+          stroke: 'rgba(255,255,255,.15)'
+        }));
       }
 
-      html += `<line x1='${p}' y1='${ty(0)}' x2='${W - p}' y2='${ty(0)}' stroke='#f6f8fb' stroke-width='2'/>`;
-      html += `<line x1='${tx(0)}' y1='${p}' x2='${tx(0)}' y2='${H - p}' stroke='#f6f8fb' stroke-width='2'/>`;
+      s.appendChild(createSvgEl('line', {
+        x1: p, y1: ty(0, h), x2: w - p, y2: ty(0, h),
+        stroke: '#f6f8fb', 'stroke-width': '2'
+      }));
+      s.appendChild(createSvgEl('line', {
+        x1: tx(0, w), y1: p, x2: tx(0, w), y2: h - p,
+        stroke: '#f6f8fb', 'stroke-width': '2'
+      }));
 
       let pts = "";
-      for (let i = 0; i <= 4000; i++) {
-        const x = min + ((max - min) * i) / 4000;
+      for (let i = 0; i <= 1000; i++) {
+        const x = min + ((max - min) * i) / 1000;
         const y = a * Math.pow(q, x) + c;
-        pts += `${tx(x)},${ty(y)} `;
+        if (Number.isFinite(y)) pts += `${tx(x, w)},${ty(y, h)} `;
       }
-      html += `<polyline points='${pts}' fill='none' stroke='#5eead4' stroke-width='3'/>`;
-      s.innerHTML = html;
+      s.appendChild(createSvgEl('polyline', {
+        points: pts.trim(),
+        fill: 'none',
+        stroke: '#5eead4',
+        'stroke-width': '3'
+      }));
     }
 
     aS.addEventListener('input', render);
     qS.addEventListener('input', render);
     cS.addEventListener('input', render);
+    window.addEventListener('resize', render);
     render();
   </script>
 </body>

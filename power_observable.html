@@ -29,7 +29,10 @@
     const el = document.getElementById("plot");
 
     function data(a, n) {
-      return window.PowerShared.samplePoints(a, n, 3000, -5, 5);
+      return window.PowerShared.samplePoints(a, n, 3000, -5, 5).map((point) => ({
+        x: point.x,
+        y: Number.isFinite(point.y) && point.y >= -5 && point.y <= 5 ? point.y : null,
+      }));
     }
 
     function render() {
@@ -47,8 +50,8 @@
         y: { domain: [-5, 5], ticks: window.PowerShared.TICKS, label: "" },
         style: { background: "#121826", color: "#d7dfeb" },
         marks: [
-          Plot.gridX({ stroke: "rgba(255,255,255,0.15)" }),
-          Plot.gridY({ stroke: "rgba(255,255,255,0.15)" }),
+          Plot.ruleX(window.PowerShared.TICKS.filter((value) => value !== 0), { stroke: "rgba(255,255,255,0.32)", strokeWidth: 1.2 }),
+          Plot.ruleY(window.PowerShared.TICKS.filter((value) => value !== 0), { stroke: "rgba(255,255,255,0.32)", strokeWidth: 1.2 }),
           Plot.ruleX([0], { stroke: "#f6f8fb", strokeWidth: 1.5 }),
           Plot.ruleY([0], { stroke: "#f6f8fb", strokeWidth: 1.5 }),
           Plot.line(data(a, n), { x: "x", y: "y", stroke: "#5eead4", strokeWidth: 3 })

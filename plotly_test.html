@@ -5,16 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Power Function (Plotly)</title>
   <link rel="stylesheet" href="shared-app.css">
-  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   <script src="shared-power.js"></script>
-  <style>
-    #plot .plot-container,
-    #plot .svg-container {
-      width: 100% !important;
-      height: 100% !important;
-    }
-  </style>
 </head>
 <body>
   <main class="app">
@@ -27,16 +20,6 @@
   </main>
 
   <script>
-    function loadPlotlyFallback(onReady) {
-      const s = document.createElement('script');
-      s.src = 'https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js';
-      s.onload = onReady;
-      s.onerror = () => {
-        document.getElementById('plot').textContent = 'Plotly konnte nicht geladen werden.';
-      };
-      document.head.appendChild(s);
-    }
-
     const aS = document.getElementById('a');
     const nS = document.getElementById('n');
     const aO = document.getElementById('aOut');
@@ -51,43 +34,87 @@
         const xv = -5 + (10 * i / 3000);
         const yv = PowerShared.powerY(a, n, xv);
         x.push(xv);
-        y.push(yv);
+        y.push(Number.isFinite(yv) && Math.abs(yv) <= 5 ? yv : null);
       }
       return { x, y };
     }
 
     function render() {
-      if (typeof Plotly === 'undefined') return;
+      try {
+        if (typeof Plotly === 'undefined' || !Plotly.newPlot) {
+          console.warn('Plotly not ready, retrying...');
+          setTimeout(render, 100);
+          return;
+        }
 
-      const { a, n } = PowerShared.getParams(aS, nS, aO, nO);
-      PowerShared.updatePowerFormula(formula, a, n);
+        const { a, n } = PowerShared.getParams(aS, nS, aO, nO);
+        PowerShared.updatePowerFormula(formula, a, n);
 
-      const v = data(a, n);
-      Plotly.react('plot', [{ x: v.x, y: v.y, mode: 'lines', line: { color: '#5eead4', width: 3 }, hoverinfo: 'skip' }], {
-        autosize: true,
-        paper_bgcolor: '#121826',
-        plot_bgcolor: '#121826',
-        margin: { l: 56, r: 24, t: 24, b: 40 },
-        xaxis: { range: [-5, 5], tickvals: PowerShared.TICKS, gridcolor: 'rgba(255,255,255,.15)', zeroline: true, zerolinecolor: '#f6f8fb', tickfont: { color: '#d7dfeb' } },
-        yaxis: { range: [-5, 5], tickvals: PowerShared.TICKS, gridcolor: 'rgba(255,255,255,.15)', zeroline: true, zerolinecolor: '#f6f8fb', tickfont: { color: '#d7dfeb' } },
-        showlegend: false
-      }, { displayModeBar: false, responsive: true });
+        const v = data(a, n);
+        Plotly.react('plot', 
+          [{ x: v.x, y: v.y, mode: 'lines', type: 'scatter', name: '', line: { color: '#5eead4', width: 4 }, hoverinfo: 'skip' }],
+          {
+            autosize: true,
+            width: plotEl.clientWidth,
+            height: plotEl.clientHeight,
+            paper_bgcolor: '#121826',
+            plot_bgcolor: '#121826',
+            margin: { l: 60, r: 30, t: 30, b: 45 },
+            xaxis: {
+              range: [-5, 5],
+              tickvals: PowerShared.TICKS,
+              tickfont: { color: '#d7dfeb', size: 12 },
+              showline: false,
+              zeroline: true,
+              zerolinewidth: 2,
+              zerolinecolor: '#f6f8fb',
+              gridcolor: 'rgba(255,255,255,.15)',
+              showgrid: true
+            },
+            yaxis: {
+              range: [-5, 5],
+              tickvals: PowerShared.TICKS,
+              tickfont: { color: '#d7dfeb', size: 12 },
+              showline: false,
+              zeroline: true,
+              zerolinewidth: 2,
+              zerolinecolor: '#f6f8fb',
+              gridcolor: 'rgba(255,255,255,.15)',
+              showgrid: true
+            },
+            showlegend: false
+          },
+          { displayModeBar: false, responsive: true }
+        );
+      } catch (e) {
+        console.error('Plotly render error:', e);
+      }
+    }
+
+    function waitForPlotly() {
+      if (typeof Plotly !== 'undefined' && Plotly.react) {
+        render();
+      } else {
+        setTimeout(waitForPlotly, 100);
+      }
     }
 
     aS.addEventListener('input', render);
     nS.addEventListener('input', render);
 
     window.addEventListener('resize', () => {
-      if (typeof Plotly !== 'undefined') {
-        Plotly.Plots.resize(plotEl);
-      }
-      render();
+      try {
+        if (typeof Plotly !== 'undefined' && Plotly.Plots?.resize) {
+          Plotly.Plots.resize(plotEl);
+        }
+      } catch (e) {}
     });
 
-    if (typeof Plotly === 'undefined') {
-      loadPlotlyFallback(render);
+    document.addEventListener('DOMContentLoaded', waitForPlotly);
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', waitForPlotly);
     } else {
-      render();
+      waitForPlotly();
     }
   </script>
 </body>

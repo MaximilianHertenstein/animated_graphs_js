@@ -82,6 +82,12 @@
       for (let i = 0; i <= 4000; i++) {
         const x = -5 + (10 * i / 4000);
         const y = PowerShared.powerY(a, n, x);
+        if (!Number.isFinite(y) || Math.abs(y) > 5) {
+          if (!first) ctx.stroke();
+          ctx.beginPath();
+          first = true;
+          continue;
+        }
         const px = tx(x, w, p);
         const py = ty(y, h, p);
         if (first) {

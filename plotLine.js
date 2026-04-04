@@ -72,7 +72,7 @@
     for (var i = 0; i <= samples; i++) {
       var x = minX + ((maxX - minX) * i) / samples;
       var y = fn(x);
-      if (!Number.isFinite(y)) {
+      if (!Number.isFinite(y) || y < minY || y > maxY) {
         started = false;
         continue;
       }
