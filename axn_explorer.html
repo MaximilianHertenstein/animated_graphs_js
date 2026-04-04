@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ax^n explorer</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uPlot/1.6.24/uPlot.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, sans-serif;
+      background: #0f0f11;
+      color: #e8e6e1;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .card {
+      background: #18181c;
+      border: 0.5px solid rgba(255,255,255,0.1);
+      border-radius: 14px;
+      padding: 2rem 2.5rem;
+      width: 100%;
+      max-width: 680px;
+    }
+
+    .expr {
+      font-family: 'Courier New', monospace;
+      font-size: 22px;
+      font-weight: 500;
+      margin-bottom: 2rem;
+      color: #e8e6e1;
+    }
+    .expr .muted { color: rgba(255,255,255,0.35); font-weight: 400; }
+
+    #controls {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 2rem;
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .row label {
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      color: rgba(255,255,255,0.45);
+      width: 52px;
+    }
+
+    .row input[type="range"] {
+      flex: 1;
+      -webkit-appearance: none;
+      height: 3px;
+      background: rgba(255,255,255,0.12);
+      border-radius: 2px;
+      outline: none;
+      cursor: pointer;
+    }
+    .row input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #7F77DD;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .row input[type="range"]::-webkit-slider-thumb:hover { background: #AFA9EC; }
+    .row input[type="range"]::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border: none;
+      border-radius: 50%;
+      background: #7F77DD;
+      cursor: pointer;
+    }
+
+    .row .val {
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      font-weight: 500;
+      min-width: 44px;
+      text-align: right;
+      color: #e8e6e1;
+    }
+
+    #plot { width: 100%; }
+    #plot .uplot { width: 100% !important; }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="expr">
+    <span class="muted">f(x) = </span><span id="aval">1.0</span>x<sup id="nval">2.0</sup>
+  </div>
+
+  <div id="controls">
+    <div class="row">
+      <label>a</label>
+      <input type="range" id="a" min="-5" max="5" step="0.1" value="1">
+      <span class="val" id="a-out">1.0</span>
+    </div>
+    <div class="row">
+      <label>n</label>
+      <input type="range" id="n" min="-4" max="8" step="0.1" value="2">
+      <span class="val" id="n-out">2.0</span>
+    </div>
+    <div class="row">
+      <label>x range</label>
+      <input type="range" id="xr" min="1" max="20" step="1" value="5">
+      <span class="val" id="xr-out">±5</span>
+    </div>
+  </div>
+
+  <div id="plot"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/uPlot/1.6.24/uPlot.iife.min.js"></script>
+<script>
+  let uplot, a = 1, n = 2, xRange = 5;
+
+  function genData() {
+    const pts = 600;
+    const xs = [], ys = [];
+    for (let i = 0; i <= pts; i++) {
+      const x = -xRange + (2 * xRange * i / pts);
+      // handle negative x with non-integer n: use sign-preserving power
+      const y = a * Math.pow(Math.abs(x), n) * (x < 0 && n % 2 !== 0 ? -1 : 1);
+      xs.push(x);
+      ys.push(isFinite(y) ? y : null);
+    }
+    return [xs, ys];
+  }
+
+  function makeOpts(w) {
+    const grid  = 'rgba(255,255,255,0.07)';
+    const axis  = 'rgba(255,255,255,0.4)';
+    return {
+      width: w,
+      height: 280,
+      padding: [12, 12, 0, 0],
+      cursor: { show: true, drag: { x: false, y: false } },
+      legend: { show: false },
+      axes: [
+        {
+          stroke: axis,
+          grid:  { stroke: grid, width: 0.5 },
+          ticks: { show: false },
+          font:  '12px monospace',
+        },
+        {
+          stroke: axis,
+          grid:  { stroke: grid, width: 0.5 },
+          ticks: { show: false },
+          font:  '12px monospace',
+          size: 56,
+        }
+      ],
+      series: [
+        {},
+        {
+          stroke: '#7F77DD',
+          width: 2.5,
+          fill: 'transparent',
+          spanGaps: false,
+        }
+      ]
+    };
+  }
+
+  function initPlot() {
+    const el = document.getElementById('plot');
+    const w  = el.offsetWidth || 600;
+    const [xs, ys] = genData();
+    if (uplot) uplot.destroy();
+    uplot = new uPlot(makeOpts(w), [xs, ys], el);
+  }
+
+  function updatePlot() {
+    if (!uplot) return;
+    uplot.setData(genData());
+  }
+
+  function updateExpr() {
+    document.getElementById('aval').textContent = a.toFixed(1);
+    document.getElementById('nval').textContent = n.toFixed(1);
+  }
+
+  document.getElementById('a').addEventListener('input', e => {
+    a = parseFloat(e.target.value);
+    document.getElementById('a-out').textContent = a.toFixed(1);
+    updateExpr(); updatePlot();
+  });
+
+  document.getElementById('n').addEventListener('input', e => {
+    n = parseFloat(e.target.value);
+    document.getElementById('n-out').textContent = n.toFixed(1);
+    updateExpr(); updatePlot();
+  });
+
+  document.getElementById('xr').addEventListener('input', e => {
+    xRange = parseInt(e.target.value);
+    document.getElementById('xr-out').textContent = '±' + xRange;
+    updatePlot();
+  });
+
+  initPlot();
+  window.addEventListener('resize', () => {
+    if (uplot) uplot.setSize({ width: document.getElementById('plot').offsetWidth, height: 280 });
+  });
+</script>
+
+</body>
+</html>
