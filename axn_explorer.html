@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ax^n explorer</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uPlot/1.6.24/uPlot.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uplot@1.6.24/dist/uPlot.min.css">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -94,7 +94,7 @@
       color: #e8e6e1;
     }
 
-    #plot { width: 100%; }
+    #plot { width: 100%; min-height: 280px; }
     #plot .uplot { width: 100% !important; }
   </style>
 </head>
@@ -126,7 +126,15 @@
   <div id="plot"></div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/uPlot/1.6.24/uPlot.iife.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uplot@1.6.24/dist/uPlot.iife.min.js"></script>
+<script>
+  // Fallback for networks where jsDelivr is blocked.
+  if (typeof uPlot === 'undefined') {
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/uPlot/1.6.24/uPlot.iife.min.js';
+    document.head.appendChild(s);
+  }
+</script>
 <script>
   let uplot, a = 1, n = 2, xRange = 5;
 
@@ -215,7 +223,20 @@
     updatePlot();
   });
 
-  initPlot();
+  function start() {
+    if (typeof uPlot !== 'function') {
+      document.getElementById('plot').textContent = 'Graph library failed to load.';
+      return;
+    }
+    initPlot();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start);
+  } else {
+    start();
+  }
+
   window.addEventListener('resize', () => {
     if (uplot) uplot.setSize({ width: document.getElementById('plot').offsetWidth, height: 280 });
   });
