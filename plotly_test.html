@@ -1,0 +1,83 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    body, html { margin:0; padding:0; height:100%; width:100%; display:flex; flex-direction:column; }
+    #controls { padding:10px; background:#f0f0f0; display:flex; gap:20px; align-items:center; }
+    #plot { flex-grow:1; }
+    #formula { font-size:1.5em; margin-left:20px; }
+  </style>
+</head>
+<body>
+
+<div id="controls">
+  <label>a: <input id="a" type="range" min="-5" max="5" step="0.1" value="1"><span id="aval">1</span></label>
+  <label>n: <input id="n" type="range" min="-5" max="5" step="1" value="2"><span id="nval">2</span></label>
+  <div id="formula">f(x) = 1 · x^2</div>
+</div>
+
+<div id="plot"></div>
+
+<script>
+const xFull = [];
+for(let i=-5;i<=5;i+=0.01)xFull.push(i);
+
+function drawPlot(){
+  const a=parseFloat(document.getElementById("a").value);
+  const n=parseInt(document.getElementById("n").value);
+
+  document.getElementById("aval").textContent=a;
+  document.getElementById("nval").textContent=n;
+  document.getElementById("formula").innerHTML=`$$f(x)=${a}\\cdot x^{${n}}$$`;
+  MathJax.typesetPromise();
+
+  const x=[]; const y=[];
+  for(let v of xFull){
+    if(v===0&&n<0){ x.push(v); y.push(NaN); continue; }
+    const val=a*Math.pow(v,n);
+    x.push(v); y.push(Math.abs(val)>5?NaN:val);
+  }
+
+  const func={x:x,y:y,mode:"lines",line:{width:3,color:'#1f77b4'},hoverinfo:"skip",showlegend:false};
+  const axisX={x:[-5,5],y:[0,0],mode:"lines",line:{color:"black",width:2},hoverinfo:"skip",showlegend:false};
+  const axisY={x:[0,0],y:[-5,5],mode:"lines",line:{color:"black",width:2},hoverinfo:"skip",showlegend:false};
+
+  const tickVals=[-5,-4,-3,-2,-1,1,2,3,4,5];
+  const tickLen=0.15;
+  const ticks=[]; const texts=[];
+
+  for(let t of tickVals){
+    // x-axis ticks
+    ticks.push({x:[t,t],y:[-tickLen,tickLen],mode:"lines",line:{color:"black",width:1},hoverinfo:"skip",showlegend:false});
+    texts.push({x:t,y:-0.5,text:String(t),mode:"text",showlegend:false,textposition:"bottom center"});
+    // y-axis ticks
+    ticks.push({x:[-tickLen,tickLen],y:[t,t],mode:"lines",line:{color:"black",width:1},hoverinfo:"skip",showlegend:false});
+    texts.push({x:-0.5,y:t,text:String(t),mode:"text",showlegend:false,textposition:"middle right"});
+  }
+
+  const grid=[];
+  for(let t=-5;t<=5;t++){
+    grid.push({x:[t,t],y:[-5,5],mode:"lines",line:{color:"#ddd",width:1},hoverinfo:"skip",showlegend:false});
+    grid.push({x:[-5,5],y:[t,t],mode:"lines",line:{color:"#ddd",width:1},hoverinfo:"skip",showlegend:false});
+  }
+
+  Plotly.react('plot',[...grid,func,axisX,axisY,...ticks,...texts],{
+    showlegend:false,
+    xaxis:{range:[-6,6],showgrid:false,zeroline:false,showticklabels:false},
+    yaxis:{range:[-6,6],showgrid:false,zeroline:false,showticklabels:false},
+    margin:{t:20,b:50,l:50,r:20}
+  });
+}
+
+document.getElementById("a").addEventListener("input",drawPlot);
+document.getElementById("n").addEventListener("input",drawPlot);
+drawPlot();
+</script>
+
+</body>
+</html>
+
+
