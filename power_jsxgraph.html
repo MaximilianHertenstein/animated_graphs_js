@@ -38,12 +38,7 @@
   </main>
 
   <script>
-    const aS = document.getElementById('a');
-    const nS = document.getElementById('n');
-    const aOut = document.getElementById('aOut');
-    const nOut = document.getElementById('nOut');
-    const formula = document.getElementById('formula');
-    const box = document.getElementById('box');
+    const ui = PowerShared.getPowerUI('box');
     let a = 1;
     let n = 2;
     let board;
@@ -51,7 +46,7 @@
 
     function boot() {
       if (typeof JXG === 'undefined') {
-        box.textContent = 'JSXGraph konnte nicht geladen werden.';
+        ui.plotEl.textContent = 'JSXGraph konnte nicht geladen werden.';
         return;
       }
 
@@ -67,7 +62,7 @@
         backgroundColor: '#121826'
       });
 
-      box.style.backgroundColor = '#121826';
+      ui.plotEl.style.backgroundColor = '#121826';
       if (board.containerObj) board.containerObj.style.backgroundColor = '#121826';
 
       if (board.defaultAxes?.x) board.defaultAxes.x.setAttribute({ strokeColor: '#f6f8fb', strokeWidth: 1.5 });
@@ -85,21 +80,18 @@
         highlight: false,
       });
 
-      board.resizeContainer(box.clientWidth, box.clientHeight, true);
+      board.resizeContainer(ui.plotEl.clientWidth, ui.plotEl.clientHeight, true);
       render();
     }
 
     function render() {
-      ({ a, n } = PowerShared.getParams(aS, nS, aOut, nOut));
-      PowerShared.updatePowerFormula(formula, a, n);
+      ({ a, n } = PowerShared.syncPowerUI(ui));
       if (graph) graph.Y = (x) => PowerShared.powerY(a, n, x);
       if (board) board.update();
     }
 
-    aS.addEventListener('input', render);
-    nS.addEventListener('input', render);
-    window.addEventListener('resize', () => {
-      if (board) board.resizeContainer(box.clientWidth, box.clientHeight, true);
+    PowerShared.bindPowerUI(ui, render, () => {
+      if (board) board.resizeContainer(ui.plotEl.clientWidth, ui.plotEl.clientHeight, true);
     });
 
     if (typeof JXG === 'undefined') {
@@ -107,7 +99,7 @@
         const s = document.createElement('script');
         s.src = 'https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js';
         s.onload = boot;
-        s.onerror = () => { box.textContent = 'JSXGraph CDN Fehler.'; };
+        s.onerror = () => { ui.plotEl.textContent = 'JSXGraph CDN Fehler.'; };
         document.head.appendChild(s);
       });
     } else {

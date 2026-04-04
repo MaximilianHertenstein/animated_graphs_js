@@ -17,6 +17,29 @@
     return { a, n };
   }
 
+  function getPowerUI(plotId) {
+    return {
+      aInput: document.getElementById("a"),
+      nInput: document.getElementById("n"),
+      aOutput: document.getElementById("aOut"),
+      nOutput: document.getElementById("nOut"),
+      formulaEl: document.getElementById("formula"),
+      plotEl: document.getElementById(plotId),
+    };
+  }
+
+  function syncPowerUI(ui) {
+    const { a, n } = getParams(ui.aInput, ui.nInput, ui.aOutput, ui.nOutput);
+    updatePowerFormula(ui.formulaEl, a, n);
+    return { a, n };
+  }
+
+  function bindPowerUI(ui, render, resizeHandler = render) {
+    ui.aInput.addEventListener("input", render);
+    ui.nInput.addEventListener("input", render);
+    if (resizeHandler) window.addEventListener("resize", resizeHandler);
+  }
+
   function updatePowerFormula(formulaEl, a, n) {
     if (!formulaEl) return;
     formulaEl.innerHTML = `\\(f(x)=${a.toFixed(1)}\\cdot x^{${n}}\\)`;
@@ -57,6 +80,9 @@
     TICKS,
     powerY,
     getParams,
+    getPowerUI,
+    syncPowerUI,
+    bindPowerUI,
     isVisibleY,
     toVisibleY,
     updatePowerFormula,

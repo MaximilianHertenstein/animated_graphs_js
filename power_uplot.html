@@ -21,12 +21,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/uplot@1.6.24/dist/uPlot.iife.min.js"></script>
   <script>
-    const aS = document.getElementById("a");
-    const nS = document.getElementById("n");
-    const aOut = document.getElementById("aOut");
-    const nOut = document.getElementById("nOut");
-    const formula = document.getElementById("formula");
-    const plotEl = document.getElementById("plot");
+    const ui = PowerShared.getPowerUI("plot");
     let u;
 
     function data(a, n) {
@@ -43,8 +38,8 @@
 
     function opts() {
       return {
-        width: plotEl.clientWidth,
-        height: plotEl.clientHeight,
+        width: ui.plotEl.clientWidth,
+        height: ui.plotEl.clientHeight,
         pxAlign: 0,
         scales: {
           x: { time: false, auto: false, range: () => [PowerShared.X_MIN, PowerShared.X_MAX] },
@@ -98,17 +93,14 @@
     }
 
     function render() {
-      const { a, n } = PowerShared.getParams(aS, nS, aOut, nOut);
-      PowerShared.updatePowerFormula(formula, a, n);
-      if (!u) u = new uPlot(opts(), data(a, n), plotEl);
+      const { a, n } = PowerShared.syncPowerUI(ui);
+      if (!u) u = new uPlot(opts(), data(a, n), ui.plotEl);
       else u.setData(data(a, n));
     }
 
-    aS.addEventListener("input", render);
-    nS.addEventListener("input", render);
-    window.addEventListener("resize", () => {
+    PowerShared.bindPowerUI(ui, render, () => {
       if (!u) return;
-      u.setSize({ width: plotEl.clientWidth, height: plotEl.clientHeight });
+      u.setSize({ width: ui.plotEl.clientWidth, height: ui.plotEl.clientHeight });
       render();
     });
     render();

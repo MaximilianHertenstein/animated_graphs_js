@@ -19,39 +19,33 @@
   </main>
 
   <script>
-    const c = document.getElementById('plot');
-    const ctx = c.getContext('2d');
-    const aS = document.getElementById('a');
-    const nS = document.getElementById('n');
-    const aO = document.getElementById('aOut');
-    const nO = document.getElementById('nOut');
-    const formula = document.getElementById('formula');
+    const ui = PowerShared.getPowerUI('plot');
+    const ctx = ui.plotEl.getContext('2d');
 
     function resizeCanvas() {
       const r = window.devicePixelRatio || 1;
-      const w = c.clientWidth;
-      const h = c.clientHeight;
-      c.width = w * r;
-      c.height = h * r;
+      const w = ui.plotEl.clientWidth;
+      const h = ui.plotEl.clientHeight;
+      ui.plotEl.width = w * r;
+      ui.plotEl.height = h * r;
       ctx.setTransform(r, 0, 0, r, 0, 0);
     }
 
-    const tx = (x, w, p) => p + ((x + 5) / 10) * (w - 2 * p);
-    const ty = (y, h, p) => h - p - ((y + 5) / 10) * (h - 2 * p);
+    const tx = (x, w, p) => p + ((x - PowerShared.X_MIN) / (PowerShared.X_MAX - PowerShared.X_MIN)) * (w - 2 * p);
+    const ty = (y, h, p) => h - p - ((y - PowerShared.Y_MIN) / (PowerShared.Y_MAX - PowerShared.Y_MIN)) * (h - 2 * p);
 
     function draw() {
-      const { a, n } = PowerShared.getParams(aS, nS, aO, nO);
-      PowerShared.updatePowerFormula(formula, a, n);
+      const { a, n } = PowerShared.syncPowerUI(ui);
 
-      const w = c.clientWidth;
-      const h = c.clientHeight;
+      const w = ui.plotEl.clientWidth;
+      const h = ui.plotEl.clientHeight;
       const p = 36;
 
       ctx.fillStyle = '#121826';
       ctx.fillRect(0, 0, w, h);
 
       ctx.strokeStyle = 'rgba(255,255,255,.15)';
-      for (let i = -5; i <= 5; i++) {
+      for (const i of PowerShared.TICKS) {
         const x = tx(i, w, p);
         const y = ty(i, h, p);
         ctx.beginPath();
@@ -80,9 +74,9 @@
       ctx.beginPath();
       let first = true;
       for (let i = 0; i <= 4000; i++) {
-        const x = -5 + (10 * i / 4000);
+        const x = PowerShared.X_MIN + ((PowerShared.X_MAX - PowerShared.X_MIN) * i / 4000);
         const y = PowerShared.powerY(a, n, x);
-        if (!Number.isFinite(y) || Math.abs(y) > 5) {
+        if (!PowerShared.isVisibleY(y)) {
           if (!first) ctx.stroke();
           ctx.beginPath();
           first = true;
@@ -105,9 +99,7 @@
       draw();
     }
 
-    aS.addEventListener('input', draw);
-    nS.addEventListener('input', draw);
-    window.addEventListener('resize', render);
+    PowerShared.bindPowerUI(ui, draw, render);
     render();
   </script>
 </body>

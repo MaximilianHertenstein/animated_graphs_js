@@ -34,23 +34,17 @@
   <script type="module">
     import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
-    const aS = document.getElementById("a");
-    const nS = document.getElementById("n");
-    const aO = document.getElementById("aOut");
-    const nO = document.getElementById("nOut");
-    const formula = document.getElementById("formula");
-    const el = document.getElementById("plot");
+    const ui = window.PowerShared.getPowerUI("plot");
 
     function buildData(a, n) {
       return window.PowerShared.samplePoints(a, n, 3000, window.PowerShared.X_MIN, window.PowerShared.X_MAX);
     }
 
     function render() {
-      const { a, n } = window.PowerShared.getParams(aS, nS, aO, nO);
-      window.PowerShared.updatePowerFormula(formula, a, n);
+      const { a, n } = window.PowerShared.syncPowerUI(ui);
 
-      const w = el.clientWidth;
-      const h = el.clientHeight;
+      const w = ui.plotEl.clientWidth;
+      const h = ui.plotEl.clientHeight;
       const m = { l: 56, r: 24, t: 24, b: 40 };
       const iw = w - m.l - m.r;
       const ih = h - m.t - m.b;
@@ -106,12 +100,10 @@
         .attr("fill", "#d7dfeb")
         .attr("font-size", "12px");
 
-      el.replaceChildren(svg.node());
+      ui.plotEl.replaceChildren(svg.node());
     }
 
-    aS.addEventListener("input", render);
-    nS.addEventListener("input", render);
-    window.addEventListener("resize", render);
+    window.PowerShared.bindPowerUI(ui, render);
     render();
   </script>
 </body>

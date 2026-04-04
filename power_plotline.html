@@ -20,17 +20,11 @@
 
   <script src="plotLine.js"></script>
   <script>
-    const aS = document.getElementById("a");
-    const nS = document.getElementById("n");
-    const aOut = document.getElementById("aOut");
-    const nOut = document.getElementById("nOut");
-    const formula = document.getElementById("formula");
-    const canvas = document.getElementById("plot");
+    const ui = PowerShared.getPowerUI("plot");
 
     function render() {
-      const { a, n } = PowerShared.getParams(aS, nS, aOut, nOut);
-      PowerShared.updatePowerFormula(formula, a, n);
-      plotLine(canvas, (x) => PowerShared.powerY(a, n, x), {
+      const { a, n } = PowerShared.syncPowerUI(ui);
+      plotLine(ui.plotEl, (x) => PowerShared.powerY(a, n, x), {
         minX: PowerShared.X_MIN,
         maxX: PowerShared.X_MAX,
         minY: PowerShared.Y_MIN,
@@ -38,9 +32,7 @@
       });
     }
 
-    aS.addEventListener("input", render);
-    nS.addEventListener("input", render);
-    window.addEventListener("resize", render);
+    PowerShared.bindPowerUI(ui, render);
     render();
   </script>
 </body>

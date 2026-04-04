@@ -21,24 +21,18 @@
   <script type="module">
     import * as Plot from "https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6/+esm";
 
-    const aS = document.getElementById("a");
-    const nS = document.getElementById("n");
-    const aOut = document.getElementById("aOut");
-    const nOut = document.getElementById("nOut");
-    const formula = document.getElementById("formula");
-    const el = document.getElementById("plot");
+    const ui = window.PowerShared.getPowerUI("plot");
 
     function data(a, n) {
       return window.PowerShared.sampleVisiblePoints(a, n, 3000);
     }
 
     function render() {
-      const { a, n } = window.PowerShared.getParams(aS, nS, aOut, nOut);
-      window.PowerShared.updatePowerFormula(formula, a, n);
+      const { a, n } = window.PowerShared.syncPowerUI(ui);
 
       const fig = Plot.plot({
-        width: el.clientWidth,
-        height: el.clientHeight,
+        width: ui.plotEl.clientWidth,
+        height: ui.plotEl.clientHeight,
         marginLeft: 56,
         marginBottom: 40,
         marginTop: 24,
@@ -55,12 +49,10 @@
         ]
       });
 
-      el.replaceChildren(fig);
+      ui.plotEl.replaceChildren(fig);
     }
 
-    aS.addEventListener("input", render);
-    nS.addEventListener("input", render);
-    window.addEventListener("resize", render);
+    window.PowerShared.bindPowerUI(ui, render);
     render();
   </script>
 </body>

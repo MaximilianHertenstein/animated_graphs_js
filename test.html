@@ -20,12 +20,8 @@
   </main>
 
   <script>
-    const aS = document.getElementById('a');
-    const nS = document.getElementById('n');
-    const aO = document.getElementById('aOut');
-    const nO = document.getElementById('nOut');
-    const formula = document.getElementById('formula');
-    const ctx = document.getElementById('chart').getContext('2d');
+    const ui = PowerShared.getPowerUI('chart');
+    const ctx = ui.plotEl.getContext('2d');
 
     function data(a, n) {
       const points = [];
@@ -48,16 +44,16 @@
         scales: {
           x: {
             type: 'linear',
-            min: -5,
-            max: 5,
+            min: PowerShared.X_MIN,
+            max: PowerShared.X_MAX,
             position: 'center',
             ticks: { stepSize: 1, color: '#d7dfeb' },
             grid: { color: 'rgba(255,255,255,.15)' },
             border: { color: '#f6f8fb', width: 2 }
           },
           y: {
-            min: -5,
-            max: 5,
+            min: PowerShared.Y_MIN,
+            max: PowerShared.Y_MAX,
             position: 'center',
             ticks: { stepSize: 1, color: '#d7dfeb' },
             grid: { color: 'rgba(255,255,255,.15)' },
@@ -68,14 +64,12 @@
     });
 
     function render() {
-      const { a, n } = PowerShared.getParams(aS, nS, aO, nO);
-      PowerShared.updatePowerFormula(formula, a, n);
+      const { a, n } = PowerShared.syncPowerUI(ui);
       chart.data.datasets[0].data = data(a, n);
       chart.update();
     }
 
-    aS.addEventListener('input', render);
-    nS.addEventListener('input', render);
+    PowerShared.bindPowerUI(ui, render, null);
     render();
   </script>
 </body>

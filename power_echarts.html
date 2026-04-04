@@ -20,38 +20,33 @@
   </main>
 
   <script>
-    const aS = document.getElementById("a");
-    const nS = document.getElementById("n");
-    const aOut = document.getElementById("aOut");
-    const nOut = document.getElementById("nOut");
-    const formula = document.getElementById("formula");
-    const chart = echarts.init(document.getElementById("chart"));
+    const ui = PowerShared.getPowerUI("chart");
+    const chart = echarts.init(ui.plotEl);
 
     function series(a, n) {
       const points = [];
       for (let i = 0; i <= 3000; i++) {
-        const x = -5 + (10 * i) / 3000;
+        const x = PowerShared.X_MIN + ((PowerShared.X_MAX - PowerShared.X_MIN) * i) / 3000;
         const y = PowerShared.powerY(a, n, x);
-        points.push([x, Number.isFinite(y) ? y : null]);
+        points.push([x, PowerShared.toVisibleY(y)]);
       }
       return points;
     }
 
     function render() {
-      const { a, n } = PowerShared.getParams(aS, nS, aOut, nOut);
-      PowerShared.updatePowerFormula(formula, a, n);
+      const { a, n } = PowerShared.syncPowerUI(ui);
 
       chart.setOption({
         animation: false,
         grid: { left: 56, right: 24, top: 24, bottom: 40 },
         xAxis: {
-          type: "value", min: -5, max: 5, interval: 1,
+          type: "value", min: PowerShared.X_MIN, max: PowerShared.X_MAX, interval: 1,
           axisLine: { lineStyle: { color: "#f6f8fb", width: 1.5 } },
           splitLine: { lineStyle: { color: "rgba(255,255,255,0.15)" } },
           axisLabel: { color: "#d7dfeb" }
         },
         yAxis: {
-          type: "value", min: -5, max: 5, interval: 1,
+          type: "value", min: PowerShared.Y_MIN, max: PowerShared.Y_MAX, interval: 1,
           axisLine: { lineStyle: { color: "#f6f8fb", width: 1.5 } },
           splitLine: { lineStyle: { color: "rgba(255,255,255,0.15)" } },
           axisLabel: { color: "#d7dfeb" }
@@ -60,9 +55,7 @@
       }, true);
     }
 
-    aS.addEventListener("input", render);
-    nS.addEventListener("input", render);
-    window.addEventListener("resize", () => chart.resize());
+    PowerShared.bindPowerUI(ui, render, () => chart.resize());
     render();
   </script>
 </body>

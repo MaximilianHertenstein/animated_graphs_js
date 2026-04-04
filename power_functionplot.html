@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Power Function (function-plot)</title>
+  <link rel="stylesheet" href="shared-app.css">
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/function-plot/dist/function-plot.js"></script>
+  <script src="shared-power.js"></script>
+  <style>
+    #plot {
+      overflow: hidden;
+      background: #121826;
+    }
+
+    #plot svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: #121826;
+    }
+
+    #plot .x.axis path,
+    #plot .y.axis path,
+    #plot .x.axis .tick line,
+    #plot .y.axis .tick line {
+      stroke: #f6f8fb;
+    }
+
+    #plot .x.axis .tick text,
+    #plot .y.axis .tick text {
+      fill: #d7dfeb;
+      font-size: 12px;
+    }
+
+    #plot .grid line {
+      stroke: rgba(255, 255, 255, 0.22);
+    }
+
+    #plot .origin {
+      stroke: #f6f8fb;
+      stroke-width: 2;
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="controls">
+      <div class="row"><label for="a">a</label><input id="a" type="range" min="-5" max="5" step="0.1" value="1"><output id="aOut">1.0</output></div>
+      <div class="row"><label for="n">n</label><input id="n" type="range" min="-4" max="8" step="1" value="2"><output id="nOut">2</output></div>
+    </section>
+    <div id="formula" class="formula">\(f(x)=1.0\cdot x^{2}\)</div>
+    <div id="plot" class="plot-surface"></div>
+  </main>
+
+  <script>
+    const ui = PowerShared.getPowerUI('plot');
+
+    function render() {
+      const { a, n } = PowerShared.syncPowerUI(ui);
+
+      if (typeof functionPlot !== 'function') {
+        ui.plotEl.textContent = 'function-plot konnte nicht geladen werden.';
+        return;
+      }
+
+      ui.plotEl.replaceChildren();
+
+      functionPlot({
+        target: '#plot',
+        width: ui.plotEl.clientWidth,
+        height: ui.plotEl.clientHeight,
+        disableZoom: true,
+        grid: true,
+        xAxis: {
+          domain: [PowerShared.X_MIN, PowerShared.X_MAX],
+          label: '',
+          tickFormat: (value) => value.toString(),
+        },
+        yAxis: {
+          domain: [PowerShared.Y_MIN, PowerShared.Y_MAX],
+          label: '',
+          tickFormat: (value) => value.toString(),
+        },
+        data: [{
+          fn: `${a} * x^(${n})`,
+          sampler: 'builtIn',
+          graphType: 'polyline',
+          color: '#5eead4',
+          closed: false,
+        }],
+      });
+    }
+
+    PowerShared.bindPowerUI(ui, render);
+    render();
+  </script>
+</body>
+</html>

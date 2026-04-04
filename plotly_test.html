@@ -20,12 +20,7 @@
   </main>
 
   <script>
-    const aS = document.getElementById('a');
-    const nS = document.getElementById('n');
-    const aO = document.getElementById('aOut');
-    const nO = document.getElementById('nOut');
-    const formula = document.getElementById('formula');
-    const plotEl = document.getElementById('plot');
+    const ui = PowerShared.getPowerUI('plot');
 
     function data(a, n) {
       const points = PowerShared.sampleVisiblePoints(a, n, 3000);
@@ -36,20 +31,19 @@
 
     function render() {
       if (typeof Plotly === 'undefined' || !Plotly.react) {
-        plotEl.textContent = 'Plotly konnte nicht geladen werden.';
+        ui.plotEl.textContent = 'Plotly konnte nicht geladen werden.';
         return;
       }
 
-      const { a, n } = PowerShared.getParams(aS, nS, aO, nO);
-      PowerShared.updatePowerFormula(formula, a, n);
+      const { a, n } = PowerShared.syncPowerUI(ui);
 
       const v = data(a, n);
       Plotly.react('plot',
         [{ x: v.x, y: v.y, mode: 'lines', type: 'scatter', name: '', line: { color: '#5eead4', width: 4 }, hoverinfo: 'skip' }],
         {
           autosize: true,
-          width: plotEl.clientWidth,
-          height: plotEl.clientHeight,
+          width: ui.plotEl.clientWidth,
+          height: ui.plotEl.clientHeight,
           paper_bgcolor: '#121826',
           plot_bgcolor: '#121826',
           margin: { l: 60, r: 30, t: 30, b: 45 },
@@ -81,11 +75,8 @@
       );
     }
 
-    aS.addEventListener('input', render);
-    nS.addEventListener('input', render);
-
-    window.addEventListener('resize', () => {
-      if (typeof Plotly !== 'undefined' && Plotly.Plots?.resize) Plotly.Plots.resize(plotEl);
+    PowerShared.bindPowerUI(ui, render, () => {
+      if (typeof Plotly !== 'undefined' && Plotly.Plots?.resize) Plotly.Plots.resize(ui.plotEl);
     });
 
     render();
