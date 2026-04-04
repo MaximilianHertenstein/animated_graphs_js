@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Exponential Explorer</title>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.js"></script>
+
+<style>
+body {
+  margin: 0;
+  font-family: system-ui;
+  background: linear-gradient(135deg, #000, #1e1b4b, #4c1d95);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+}
+
+.card {
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  padding: 15px;
+  box-shadow: 0 0 30px rgba(0,255,255,0.15);
+}
+
+.slider {
+  width: 300px;
+}
+
+label {
+  display: block;
+  margin-top: 10px;
+}
+
+.green { color: #22c55e; }
+.blue { color: #38bdf8; }
+.pink { color: #f472b6; }
+</style>
+</head>
+
+<body>
+
+<div class="card">
+<svg id="plot" width="450" height="450"></svg>
+</div>
+
+<div class="card">
+  <label class="green">a = <span id="aval">1,0</span></label>
+  <input id="a" class="slider" type="range" min="-5" max="5" step="0.1" value="1">
+
+  <label class="blue">q = <span id="qval">1,0</span></label>
+  <input id="q" class="slider" type="range" min="0" max="5" step="0.1" value="1">
+
+  <label class="pink">c = <span id="cval">0,0</span></label>
+  <input id="c" class="slider" type="range" min="-5" max="5" step="0.1" value="0">
+</div>
+
+<div class="card" id="formula"></div>
+
+<script>
+const svg = document.getElementById("plot");
+
+const min=-5, max=5, size=450;
+const scale=size/(max-min);
+
+const toX = x => (x-min)*scale;
+const toY = y => size-(y-min)*scale;
+
+const fmt = v => v.toFixed(1).replace(".", ",");
+
+const aS = document.getElementById("a");
+const qS = document.getElementById("q");
+const cS = document.getElementById("c");
+
+const aval=document.getElementById("aval");
+const qval=document.getElementById("qval");
+const cval=document.getElementById("cval");
+
+function draw(){
+
+let a=+aS.value;
+let q=+qS.value;
+let c=+cS.value;
+
+aval.textContent=fmt(a);
+qval.textContent=fmt(q);
+cval.textContent=fmt(c);
+
+svg.innerHTML="";
+
+svg.innerHTML += `
+<defs>
+<marker id="arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+<path d="M0,0 L6,3 L0,6 Z" fill="white"/>
+</marker>
+</defs>`;
+
+// grid
+for(let i=min;i<=max;i++){
+svg.innerHTML += `
+<line x1="${toX(i)}" y1="0" x2="${toX(i)}" y2="${size}" stroke="rgba(255,255,255,0.08)"/>
+<line x1="0" y1="${toY(i)}" x2="${size}" y2="${toY(i)}" stroke="rgba(255,255,255,0.08)"/>`;
+}
+
+// axes
+svg.innerHTML += `
+<line x1="${toX(min)}" y1="${toY(0)}" x2="${toX(max)}" y2="${toY(0)}" stroke="white" stroke-width="2" marker-end="url(#arrow)"/>
+<line x1="${toX(0)}" y1="${toY(min)}" x2="${toX(0)}" y2="${toY(max)}" stroke="white" stroke-width="2" marker-end="url(#arrow)"/>`;
+
+// axis labels
+svg.innerHTML += `
+<text x="${toX(max)-10}" y="${toY(0)-8}" fill="white">x</text>
+<text x="${toX(0)+6}" y="${toY(max)+12}" fill="white">y</text>`;
+
+// ticks
+for(let i=min+1;i<max;i++){
+svg.innerHTML += `
+<text x="${toX(i)}" y="${toY(0)+15}" fill="white" font-size="10" text-anchor="middle">${i}</text>
+<text x="${toX(0)-10}" y="${toY(i)+3}" fill="white" font-size="10" text-anchor="end">${i}</text>`;
+}
+
+// graph
+let pts="";
+for(let x=min;x<=max;x+=0.02){
+let y=a*Math.pow(q,x)+c;
+pts+=`${toX(x)},${toY(y)} `;
+}
+
+svg.innerHTML += `
+<polyline points="${pts}" fill="none" stroke="white" stroke-width="2.5"/>`;
+
+// y=c
+svg.innerHTML += `
+<line x1="${toX(min)}" y1="${toY(c)}" x2="${toX(max)}" y2="${toY(c)}"
+stroke="#f472b6" stroke-dasharray="6,6"/>`;
+
+// points
+svg.innerHTML += `
+<circle cx="${toX(0)}" cy="${toY(a+c)}" r="5" fill="#22c55e"/>
+<circle cx="${toX(1)}" cy="${toY(a*q+c)}" r="5" fill="#38bdf8"/>`;
+
+// formula
+katex.render(
+`f(x)=\\color{#22c55e}{${fmt(a)}}\\cdot\\color{#38bdf8}{${fmt(q)}}^{x}+\\color{#f472b6}{${fmt(c)}}`,
+document.getElementById("formula")
+);
+
+}
+
+[aS,qS,cS].forEach(s=>s.addEventListener("input",draw));
+
+draw();
+</script>
+
+</body>
+</html>

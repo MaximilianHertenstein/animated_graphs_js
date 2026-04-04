@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Potenzfunktionen Applet</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 20px;
+    }
+    .slider-container {
+      margin: 15px;
+    }
+    #chart-container {
+      width: 600px;
+      margin: auto;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Potenzfunktion: f(x) = a · xⁿ</h2>
+
+<div class="slider-container">
+  <label>Streckfaktor a: <span id="aValue">1</span></label><br>
+  <input type="range" id="aSlider" min="-5" max="5" step="0.1" value="1">
+</div>
+
+<div class="slider-container">
+  <label>Exponent n: <span id="nValue">2</span></label><br>
+  <input type="range" id="nSlider" min="-5" max="5" step="1" value="2">
+</div>
+
+<div id="chart-container">
+  <canvas id="chart"></canvas>
+</div>
+
+<script>
+const ctx = document.getElementById('chart').getContext('2d');
+
+let a = 1;
+let n = 2;
+
+const xValues = [];
+for (let x = -5; x <= 5; x += 0.05) {
+  xValues.push(x);
+}
+
+function computeData() {
+  const left = [];
+  const right = [];
+
+  xValues.forEach(x => {
+    if (n < 0 && x === 0) return;
+
+    const y = a * Math.pow(x, n);
+
+    if (n < 0 && Math.abs(x) < 0.05) return;
+
+    if (x < 0) {
+      left.push({x: x, y: y});
+    } else if (x > 0) {
+      right.push({x: x, y: y});
+    } else if (n >= 0) {
+      right.push({x: x, y: y});
+    }
+  });
+
+  return { left, right };
+}
+
+const commonStyle = {
+  borderColor: "blue",
+  borderWidth: 2,
+  pointRadius: 0,
+  fill: false
+};
+
+const chart = new Chart(ctx, {
+  type: 'line',
+  data: {
+    datasets: [
+      { ...commonStyle, data: [] },
+      { ...commonStyle, data: [] }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: true,
+    aspectRatio: 1,
+    animation: false,
+
+    plugins: {
+      legend: {
+        display: false // ← Legende aus
+      }
+    },
+
+    elements: {
+      line: {
+        spanGaps: false
+      }
+    },
+
+    scales: {
+      x: {
+        type: 'linear',
+        min: -5,
+        max: 5,
+        ticks: { stepSize: 1 },
+        position: 'center'
+      },
+      y: {
+        min: -5,
+        max: 5,
+        ticks: { stepSize: 1 },
+        position: 'center'
+      }
+    }
+  }
+});
+
+function updateChart() {
+  const { left, right } = computeData();
+
+  chart.data.datasets[0].data = left;
+  chart.data.datasets[1].data = right;
+
+  chart.update();
+}
+
+updateChart();
+
+document.getElementById('aSlider').addEventListener('input', (e) => {
+  a = parseFloat(e.target.value);
+  document.getElementById('aValue').textContent = a;
+  updateChart();
+});
+
+document.getElementById('nSlider').addEventListener('input', (e) => {
+  n = parseInt(e.target.value);
+  document.getElementById('nValue').textContent = n;
+  updateChart();
+});
+</script>
+
+</body>
+</html>
