@@ -71,6 +71,7 @@
       if (board.gridY) board.gridY.setAttribute({ strokeColor: 'rgba(255,255,255,0.15)', strokeWidth: 0.5 });
 
       graph = board.create('functiongraph', [
+        // Read current parameters on every evaluation; no data array needed.
         (x) => PowerShared.powerY(a, n, x),
         PowerShared.X_MIN,
         PowerShared.X_MAX
@@ -86,7 +87,6 @@
 
     function render() {
       ({ a, n } = PowerShared.syncPowerUI(ui));
-      if (graph) graph.Y = (x) => PowerShared.powerY(a, n, x);
       if (board) board.update();
     }
 

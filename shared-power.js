@@ -72,6 +72,21 @@
     }));
   }
 
+  function buildPowerMathTerm(a, n) {
+    return `(${a}) * x^(${n})`;
+  }
+
+  function buildPowerJsTerm(a, n) {
+    return `(${a}) * Math.pow(x, ${n})`;
+  }
+
+  function toXYArrays(points) {
+    return {
+      x: points.map((point) => point.x),
+      y: points.map((point) => point.y),
+    };
+  }
+
   window.PowerShared = {
     X_MIN,
     X_MAX,
@@ -88,5 +103,8 @@
     updatePowerFormula,
     samplePoints,
     sampleVisiblePoints,
+    buildPowerMathTerm,
+    buildPowerJsTerm,
+    toXYArrays,
   };
 })();

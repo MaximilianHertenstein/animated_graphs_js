@@ -25,15 +25,9 @@
     let u;
 
     function data(a, n) {
-      const xs = [];
-      const ys = [];
-      for (let i = 0; i <= 3000; i++) {
-        const x = PowerShared.X_MIN + ((PowerShared.X_MAX - PowerShared.X_MIN) * i / 3000);
-        const y = PowerShared.powerY(a, n, x);
-        xs.push(x);
-        ys.push(PowerShared.toVisibleY(y));
-      }
-      return [xs, ys];
+      const points = PowerShared.sampleVisiblePoints(a, n, 3000);
+      const { x, y } = PowerShared.toXYArrays(points);
+      return [x, y];
     }
 
     function opts() {

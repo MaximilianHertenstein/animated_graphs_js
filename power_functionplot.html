@@ -41,37 +41,27 @@
   <script>
     const ui = PowerShared.getPowerUI('plot');
 
-    function buildSeries(a, n) {
-      const points = PowerShared.sampleVisiblePoints(a, n, 3000);
-      const series = [];
-      let segment = [];
+    function buildData(a, n) {
+      const fn = PowerShared.buildPowerMathTerm(a, n);
+      const color = '#5eead4';
 
-      for (const point of points) {
-        if (point.y === null) {
-          if (segment.length > 1) {
-            series.push({
-              points: segment,
-              fnType: 'points',
-              graphType: 'polyline',
-              color: '#5eead4',
-            });
-          }
-          segment = [];
-          continue;
-        }
-        segment.push([point.x, point.y]);
+      if (n < 0) {
+        const eps = 0.0001;
+        return [
+          {
+            fn,
+            color,
+            range: [PowerShared.X_MIN, -eps],
+          },
+          {
+            fn,
+            color,
+            range: [eps, PowerShared.X_MAX],
+          },
+        ];
       }
 
-      if (segment.length > 1) {
-        series.push({
-          points: segment,
-          fnType: 'points',
-          graphType: 'polyline',
-          color: '#5eead4',
-        });
-      }
-
-      return series;
+      return [{ fn, color }];
     }
 
     function render() {
@@ -100,7 +90,7 @@
           label: '',
           tickFormat: (value) => value.toString(),
         },
-        data: buildSeries(a, n),
+        data: buildData(a, n),
       });
     }
 

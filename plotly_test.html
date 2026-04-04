@@ -23,10 +23,7 @@
     const ui = PowerShared.getPowerUI('plot');
 
     function data(a, n) {
-      const points = PowerShared.sampleVisiblePoints(a, n, 3000);
-      const x = points.map((point) => point.x);
-      const y = points.map((point) => point.y);
-      return { x, y };
+      return PowerShared.toXYArrays(PowerShared.sampleVisiblePoints(a, n, 3000));
     }
 
     function render() {

@@ -24,13 +24,7 @@
     const chart = echarts.init(ui.plotEl);
 
     function series(a, n) {
-      const points = [];
-      for (let i = 0; i <= 3000; i++) {
-        const x = PowerShared.X_MIN + ((PowerShared.X_MAX - PowerShared.X_MIN) * i) / 3000;
-        const y = PowerShared.powerY(a, n, x);
-        points.push([x, PowerShared.toVisibleY(y)]);
-      }
-      return points;
+      return PowerShared.sampleVisiblePoints(a, n, 3000).map((point) => [point.x, point.y]);
     }
 
     function render() {

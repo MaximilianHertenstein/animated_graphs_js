@@ -24,7 +24,7 @@
     const ui = window.PowerShared.getPowerUI("plot");
 
     function buildData(a, n) {
-      return window.PowerShared.samplePoints(a, n, 3000, window.PowerShared.X_MIN, window.PowerShared.X_MAX);
+      return window.PowerShared.sampleVisiblePoints(a, n, 3000, window.PowerShared.X_MIN, window.PowerShared.X_MAX);
     }
 
     function render() {
@@ -54,7 +54,7 @@
       });
 
       const line = d3.line()
-        .defined((p) => window.PowerShared.isVisibleY(p.y))
+        .defined((p) => p.y !== null)
         .x((p) => x(p.x))
         .y((p) => y(p.y));
 
