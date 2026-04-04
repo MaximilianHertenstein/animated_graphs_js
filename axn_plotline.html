@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ax^n Explorer (plotLine.js)</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #0f1117;
+      color: #e7ecf3;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+    .card {
+      width: min(100%, 980px);
+      background: #171b24;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px;
+      padding: 20px;
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+    .formula {
+      margin: 0 0 14px;
+      color: #aab5c5;
+      font-family: "Cascadia Code", "Consolas", monospace;
+    }
+    .controls {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .row {
+      display: grid;
+      grid-template-columns: 26px 1fr 56px;
+      align-items: center;
+      gap: 10px;
+    }
+    .row label {
+      color: #aab5c5;
+      font-family: "Cascadia Code", "Consolas", monospace;
+    }
+    .row output {
+      text-align: right;
+      color: #e7ecf3;
+      font-family: "Cascadia Code", "Consolas", monospace;
+    }
+    #plot {
+      width: 100%;
+      height: 520px;
+      border-radius: 10px;
+      overflow: hidden;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>ax^n Explorer (plotLine.js)</h1>
+    <p class="formula">f(x) = <span id="aVal">1.0</span> · x^<span id="nVal">2.0</span></p>
+
+    <section class="controls">
+      <div class="row">
+        <label for="a">a</label>
+        <input id="a" type="range" min="-5" max="5" step="0.1" value="1">
+        <output id="aOut">1.0</output>
+      </div>
+      <div class="row">
+        <label for="n">n</label>
+        <input id="n" type="range" min="-4" max="8" step="0.1" value="2">
+        <output id="nOut">2.0</output>
+      </div>
+    </section>
+
+    <canvas id="plot"></canvas>
+  </main>
+
+  <script src="plotLine.js"></script>
+  <script>
+    const aSlider = document.getElementById('a');
+    const nSlider = document.getElementById('n');
+    const aOut = document.getElementById('aOut');
+    const nOut = document.getElementById('nOut');
+    const aVal = document.getElementById('aVal');
+    const nVal = document.getElementById('nVal');
+    const canvas = document.getElementById('plot');
+
+    function render() {
+      const a = parseFloat(aSlider.value);
+      const n = parseFloat(nSlider.value);
+
+      aOut.value = a.toFixed(1);
+      nOut.value = n.toFixed(1);
+      aVal.textContent = a.toFixed(1);
+      nVal.textContent = n.toFixed(1);
+
+      plotLine(
+        canvas,
+        function (x) {
+          return a * Math.pow(Math.abs(x), n) * (x < 0 && n % 2 !== 0 ? -1 : 1);
+        },
+        { minX: -5, maxX: 5, minY: -5, maxY: 5 }
+      );
+    }
+
+    aSlider.addEventListener('input', render);
+    nSlider.addEventListener('input', render);
+    window.addEventListener('resize', render);
+
+    render();
+  </script>
+</body>
+</html>
