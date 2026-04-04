@@ -44,21 +44,7 @@
       transform: translateY(-50%);
     }
 
-    #uv {
-      position: absolute;
-      inset: 0;
-      z-index: 2;
-    }
 
-    #uv svg text {
-      fill: #d7dfeb;
-      font-size: 12px;
-    }
-
-    #uv svg .domain,
-    #uv svg .tick line {
-      stroke: #f6f8fb;
-    }
   </style>
 </head>
 <body>
@@ -72,7 +58,7 @@
   </main>
 
   <script type="module">
-    import { XYContainer, Line, Axis, AxisType } from "https://cdn.jsdelivr.net/npm/@unovis/ts@1.6.4/+esm";
+    import { XYContainer, Line } from "https://cdn.jsdelivr.net/npm/@unovis/ts@1.6.4/+esm";
 
     const ui = window.PowerShared.getPowerUI("plot");
     const unovisHost = document.getElementById("uv");
@@ -86,16 +72,6 @@
       x: (d) => d.x,
       y: (d) => d.yRight,
       color: "#5eead4",
-    });
-
-    const xAxis = new Axis({
-      type: AxisType.X,
-      numTicks: 11,
-    });
-
-    const yAxis = new Axis({
-      type: AxisType.Y,
-      numTicks: 11,
     });
 
     function buildData(a, n) {
@@ -128,7 +104,7 @@
 
       if (!chart) {
         chart = new XYContainer(unovisHost, {
-          components: [leftLine, rightLine, xAxis, yAxis],
+          components: [leftLine, rightLine],
           xDomain: [window.PowerShared.X_MIN, window.PowerShared.X_MAX],
           yDomain: [window.PowerShared.Y_MIN, window.PowerShared.Y_MAX],
           width: ui.plotEl.clientWidth,
