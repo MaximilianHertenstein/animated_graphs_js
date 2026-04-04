@@ -1,2 +1,91 @@
 <!doctype html>
-<html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Power Function (Chart.js)</title><script src="https://cdn.jsdelivr.net/npm/chart.js"></script><style>*{box-sizing:border-box}body{margin:0;background:#0f1117;color:#e7ecf3;font-family:system-ui,sans-serif}.app{width:100vw;height:100vh;display:grid;grid-template-rows:auto 1fr;gap:10px;padding:12px}.controls{display:grid;gap:8px}.row{display:grid;grid-template-columns:24px 1fr 50px;gap:8px;align-items:center}#chartWrap{min-height:0}#chart{width:100%!important;height:100%!important;background:#121826;border:1px solid #2a3347}</style></head><body><main class="app"><section class="controls"><div class="row"><label for="a">a</label><input id="a" type="range" min="-5" max="5" step="0.1" value="1"><output id="aOut">1.0</output></div><div class="row"><label for="n">n</label><input id="n" type="range" min="-4" max="8" step="1" value="2"><output id="nOut">2</output></div></section><div id="chartWrap"><canvas id="chart"></canvas></div></main><script>const aS=document.getElementById('a'),nS=document.getElementById('n'),aO=document.getElementById('aOut'),nO=document.getElementById('nOut');const ctx=document.getElementById('chart').getContext('2d');function d(a,n){const l=[],r=[];for(let i=0;i<=2000;i++){const x=-5+10*i/2000;const y=a*Math.pow(Math.abs(x),n)*(x<0&&n%2!==0?-1:1);if(x<0)l.push({x,y});else r.push({x,y});}return{l,r};}const ch=new Chart(ctx,{type:'line',data:{datasets:[{data:[],borderColor:'#5eead4',borderWidth:3,pointRadius:0},{data:[],borderColor:'#5eead4',borderWidth:3,pointRadius:0}]},options:{responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{display:false}},scales:{x:{type:'linear',min:-5,max:5,ticks:{stepSize:1,color:'#d7dfeb'},grid:{color:'rgba(255,255,255,.15)'},border:{color:'#f6f8fb'}},y:{min:-5,max:5,ticks:{stepSize:1,color:'#d7dfeb'},grid:{color:'rgba(255,255,255,.15)'},border:{color:'#f6f8fb'}}}}});function r(){const a=parseFloat(aS.value),n=parseInt(nS.value,10);aO.textContent=a.toFixed(1);nO.textContent=String(n);const v=d(a,n);ch.data.datasets[0].data=v.l;ch.data.datasets[1].data=v.r;ch.update();}aS.addEventListener('input',r);nS.addEventListener('input',r);r();</script></body></html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Power Function (Chart.js)</title>
+  <link rel="stylesheet" href="shared-app.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+  <main class="app">
+    <section class="controls">
+      <div class="row"><label for="a">a</label><input id="a" type="range" min="-5" max="5" step="0.1" value="1"><output id="aOut">1.0</output></div>
+      <div class="row"><label for="n">n</label><input id="n" type="range" min="-4" max="8" step="1" value="2"><output id="nOut">2</output></div>
+    </section>
+    <div id="formula" class="formula">\(f(x)=1.0\cdot x^{2}\)</div>
+    <canvas id="chart" class="plot-surface"></canvas>
+  </main>
+
+  <script>
+    const aS = document.getElementById('a');
+    const nS = document.getElementById('n');
+    const aO = document.getElementById('aOut');
+    const nO = document.getElementById('nOut');
+    const formula = document.getElementById('formula');
+    const ctx = document.getElementById('chart').getContext('2d');
+
+    function data(a, n) {
+      const l = [];
+      const r = [];
+      for (let i = 0; i <= 2000; i++) {
+        const x = -5 + (10 * i / 2000);
+        const y = a * Math.pow(Math.abs(x), n) * (x < 0 && n % 2 !== 0 ? -1 : 1);
+        if (x < 0) l.push({ x, y });
+        else r.push({ x, y });
+      }
+      return { l, r };
+    }
+
+    const chart = new Chart(ctx, {
+      type: 'line',
+      data: { datasets: [{ data: [], borderColor: '#5eead4', borderWidth: 3, pointRadius: 0 }, { data: [], borderColor: '#5eead4', borderWidth: 3, pointRadius: 0 }] },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: {
+            type: 'linear',
+            min: -5,
+            max: 5,
+            position: 'center',
+            ticks: { stepSize: 1, color: '#d7dfeb' },
+            grid: { color: 'rgba(255,255,255,.15)' },
+            border: { color: '#f6f8fb', width: 2 }
+          },
+          y: {
+            min: -5,
+            max: 5,
+            position: 'center',
+            ticks: { stepSize: 1, color: '#d7dfeb' },
+            grid: { color: 'rgba(255,255,255,.15)' },
+            border: { color: '#f6f8fb', width: 2 }
+          }
+        }
+      }
+    });
+
+    function render() {
+      const a = parseFloat(aS.value);
+      const n = parseInt(nS.value, 10);
+      aO.textContent = a.toFixed(1);
+      nO.textContent = String(n);
+      formula.innerHTML = `\\(f(x)=${a.toFixed(1)}\\cdot x^{${n}}\\)`;
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise([formula]).catch(() => {});
+      }
+      const v = data(a, n);
+      chart.data.datasets[0].data = v.l;
+      chart.data.datasets[1].data = v.r;
+      chart.update();
+    }
+
+    aS.addEventListener('input', render);
+    nS.addEventListener('input', render);
+    render();
+  </script>
+</body>
+</html>

@@ -1,2 +1,100 @@
 <!doctype html>
-<html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Power Function (Plotly)</title><script src="https://cdn.plot.ly/plotly-latest.min.js"></script><style>*{box-sizing:border-box}body{margin:0;background:#0f1117;color:#e7ecf3;font-family:system-ui,sans-serif}.app{width:100vw;height:100vh;display:grid;grid-template-rows:auto 1fr;gap:10px;padding:12px}.controls{display:grid;gap:8px}.row{display:grid;grid-template-columns:24px 1fr 50px;gap:8px;align-items:center}#plot{width:100%;height:100%;background:#121826;border:1px solid #2a3347}</style></head><body><main class="app"><section class="controls"><div class="row"><label for="a">a</label><input id="a" type="range" min="-5" max="5" step="0.1" value="1"><output id="aOut">1.0</output></div><div class="row"><label for="n">n</label><input id="n" type="range" min="-4" max="8" step="1" value="2"><output id="nOut">2</output></div></section><div id="plot"></div></main><script>const aS=document.getElementById('a'),nS=document.getElementById('n'),aO=document.getElementById('aOut'),nO=document.getElementById('nOut');function d(a,n){const x=[],y=[];for(let i=0;i<=3000;i++){const xv=-5+10*i/3000;const yv=a*Math.pow(Math.abs(xv),n)*(xv<0&&n%2!==0?-1:1);x.push(xv);y.push(yv);}return{x,y};}function r(){const a=parseFloat(aS.value),n=parseInt(nS.value,10);aO.textContent=a.toFixed(1);nO.textContent=String(n);const v=d(a,n),ticks=[-5,-4,-3,-2,-1,0,1,2,3,4,5];Plotly.react('plot',[{x:v.x,y:v.y,mode:'lines',line:{color:'#5eead4',width:3},hoverinfo:'skip'}],{paper_bgcolor:'#121826',plot_bgcolor:'#121826',margin:{l:56,r:24,t:24,b:40},xaxis:{range:[-5,5],tickvals:ticks,gridcolor:'rgba(255,255,255,.15)',zeroline:true,zerolinecolor:'#f6f8fb',tickfont:{color:'#d7dfeb'}},yaxis:{range:[-5,5],tickvals:ticks,gridcolor:'rgba(255,255,255,.15)',zeroline:true,zerolinecolor:'#f6f8fb',tickfont:{color:'#d7dfeb'}},showlegend:false},{displayModeBar:false,responsive:true});}aS.addEventListener('input',r);nS.addEventListener('input',r);r();</script></body></html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Power Function (Plotly)</title>
+  <link rel="stylesheet" href="shared-app.css">
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    #plot .plot-container,
+    #plot .svg-container {
+      width: 100% !important;
+      height: 100% !important;
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="controls">
+      <div class="row"><label for="a">a</label><input id="a" type="range" min="-5" max="5" step="0.1" value="1"><output id="aOut">1.0</output></div>
+      <div class="row"><label for="n">n</label><input id="n" type="range" min="-4" max="8" step="1" value="2"><output id="nOut">2</output></div>
+    </section>
+    <div id="formula" class="formula">\(f(x)=1.0\cdot x^{2}\)</div>
+    <div id="plot" class="plot-surface"></div>
+  </main>
+
+  <script>
+    function loadPlotlyFallback(onReady) {
+      const s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js';
+      s.onload = onReady;
+      s.onerror = () => {
+        document.getElementById('plot').textContent = 'Plotly konnte nicht geladen werden.';
+      };
+      document.head.appendChild(s);
+    }
+
+    const aS = document.getElementById('a');
+    const nS = document.getElementById('n');
+    const aO = document.getElementById('aOut');
+    const nO = document.getElementById('nOut');
+    const formula = document.getElementById('formula');
+    const plotEl = document.getElementById('plot');
+
+    function data(a, n) {
+      const x = [];
+      const y = [];
+      for (let i = 0; i <= 3000; i++) {
+        const xv = -5 + (10 * i / 3000);
+        const yv = a * Math.pow(Math.abs(xv), n) * (xv < 0 && n % 2 !== 0 ? -1 : 1);
+        x.push(xv);
+        y.push(yv);
+      }
+      return { x, y };
+    }
+
+    function render() {
+      if (typeof Plotly === 'undefined') return;
+
+      const a = parseFloat(aS.value);
+      const n = parseInt(nS.value, 10);
+      aO.textContent = a.toFixed(1);
+      nO.textContent = String(n);
+      formula.innerHTML = `\\(f(x)=${a.toFixed(1)}\\cdot x^{${n}}\\)`;
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise([formula]).catch(() => {});
+      }
+
+      const v = data(a, n);
+      const ticks = [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5];
+      Plotly.react('plot', [{ x: v.x, y: v.y, mode: 'lines', line: { color: '#5eead4', width: 3 }, hoverinfo: 'skip' }], {
+        autosize: true,
+        paper_bgcolor: '#121826',
+        plot_bgcolor: '#121826',
+        margin: { l: 56, r: 24, t: 24, b: 40 },
+        xaxis: { range: [-5, 5], tickvals: ticks, gridcolor: 'rgba(255,255,255,.15)', zeroline: true, zerolinecolor: '#f6f8fb', tickfont: { color: '#d7dfeb' } },
+        yaxis: { range: [-5, 5], tickvals: ticks, gridcolor: 'rgba(255,255,255,.15)', zeroline: true, zerolinecolor: '#f6f8fb', tickfont: { color: '#d7dfeb' } },
+        showlegend: false
+      }, { displayModeBar: false, responsive: true });
+    }
+
+    aS.addEventListener('input', render);
+    nS.addEventListener('input', render);
+
+    window.addEventListener('resize', () => {
+      if (typeof Plotly !== 'undefined') {
+        Plotly.Plots.resize(plotEl);
+      }
+      render();
+    });
+
+    if (typeof Plotly === 'undefined') {
+      loadPlotlyFallback(render);
+    } else {
+      render();
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #0f1117;
+  color: #e7ecf3;
+  font-family: system-ui, sans-serif;
+}
+
+.app {
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: 10px;
+  padding: 12px;
+}
+
+.controls {
+  display: grid;
+  gap: 8px;
+}
+
+.formula {
+  margin: 0;
+  min-height: 28px;
+  color: #d7dfeb;
+  font-size: 1rem;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 24px 1fr 50px;
+  gap: 8px;
+  align-items: center;
+}
+
+.plot-surface {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  background: #121826;
+  border: 1px solid #2a3347;
+}
+
+.plot-surface canvas,
+.plot-surface svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}

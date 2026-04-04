@@ -1,76 +1,31 @@
 <!doctype html>
 <html lang="de">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Power Function (Observable Plot)</title>
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      background: #0f1117;
-      color: #e7ecf3;
-      font-family: system-ui, sans-serif;
-    }
-
-    .app {
-      width: 100vw;
-      height: 100vh;
-      display: grid;
-      grid-template-rows: auto 1fr;
-      gap: 10px;
-      padding: 12px;
-    }
-
-    .controls {
-      display: grid;
-      gap: 8px;
-    }
-
-    .row {
-      display: grid;
-      grid-template-columns: 24px 1fr 50px;
-      gap: 8px;
-      align-items: center;
-    }
-
-    #plot {
-      width: 100%;
-      height: 100%;
-      background: #121826;
-      border: 1px solid #2a3347;
-    }
-
-    #plot svg {
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
-  </style>
+  <link rel="stylesheet" href="shared-app.css">
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
-
 <body>
   <main class="app">
     <section class="controls">
-      <div class="row"><label for="a">a</label><input id="a" type="range" min="-5" max="5" step="0.1" value="1"><output
-          id="aOut">1.0</output></div>
-      <div class="row"><label for="n">n</label><input id="n" type="range" min="-4" max="8" step="1" value="2"><output
-          id="nOut">2</output></div>
+      <div class="row"><label for="a">a</label><input id="a" type="range" min="-5" max="5" step="0.1" value="1"><output id="aOut">1.0</output></div>
+      <div class="row"><label for="n">n</label><input id="n" type="range" min="-4" max="8" step="1" value="2"><output id="nOut">2</output></div>
     </section>
-    <div id="plot"></div>
+    <div id="formula" class="formula">\(f(x)=1.0\cdot x^{2}\)</div>
+    <div id="plot" class="plot-surface"></div>
   </main>
 
   <script type="module">
     import * as Plot from "https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6/+esm";
-    const aS = document.getElementById('a');
-    const nS = document.getElementById('n');
-    const aOut = document.getElementById('aOut');
-    const nOut = document.getElementById('nOut');
-    const el = document.getElementById('plot');
+
+    const aS = document.getElementById("a");
+    const nS = document.getElementById("n");
+    const aOut = document.getElementById("aOut");
+    const nOut = document.getElementById("nOut");
+    const formula = document.getElementById("formula");
+    const el = document.getElementById("plot");
 
     function data(a, n) {
       const d = [];
@@ -83,31 +38,41 @@
     }
 
     function render() {
-      const a = parseFloat(aS.value), n = parseInt(nS.value, 10);
-      aOut.textContent = a.toFixed(1); nOut.textContent = String(n);
+      const a = parseFloat(aS.value);
+      const n = parseInt(nS.value, 10);
+      aOut.textContent = a.toFixed(1);
+      nOut.textContent = String(n);
+      formula.innerHTML = `\\(f(x)=${a.toFixed(1)}\\cdot x^{${n}}\\)`;
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise([formula]).catch(() => {});
+      }
+
       const fig = Plot.plot({
         width: el.clientWidth,
         height: el.clientHeight,
-        marginLeft: 56, marginBottom: 40, marginTop: 24, marginRight: 24,
-        x: { domain: [-5, 5], ticks: [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5], label: '' },
-        y: { domain: [-5, 5], ticks: [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5], label: '' },
-        style: { background: '#121826', color: '#d7dfeb' },
+        marginLeft: 56,
+        marginBottom: 40,
+        marginTop: 24,
+        marginRight: 24,
+        x: { domain: [-5, 5], ticks: [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5], label: "" },
+        y: { domain: [-5, 5], ticks: [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5], label: "" },
+        style: { background: "#121826", color: "#d7dfeb" },
         marks: [
-          Plot.gridX({ stroke: 'rgba(255,255,255,0.15)' }),
-          Plot.gridY({ stroke: 'rgba(255,255,255,0.15)' }),
-          Plot.ruleX([0], { stroke: '#f6f8fb', strokeWidth: 1.5 }),
-          Plot.ruleY([0], { stroke: '#f6f8fb', strokeWidth: 1.5 }),
-          Plot.line(data(a, n), { x: 'x', y: 'y', stroke: '#5eead4', strokeWidth: 3 })
+          Plot.gridX({ stroke: "rgba(255,255,255,0.15)" }),
+          Plot.gridY({ stroke: "rgba(255,255,255,0.15)" }),
+          Plot.ruleX([0], { stroke: "#f6f8fb", strokeWidth: 1.5 }),
+          Plot.ruleY([0], { stroke: "#f6f8fb", strokeWidth: 1.5 }),
+          Plot.line(data(a, n), { x: "x", y: "y", stroke: "#5eead4", strokeWidth: 3 })
         ]
       });
+
       el.replaceChildren(fig);
     }
 
-    aS.addEventListener('input', render);
-    nS.addEventListener('input', render);
-    window.addEventListener('resize', render);
+    aS.addEventListener("input", render);
+    nS.addEventListener("input", render);
+    window.addEventListener("resize", render);
     render();
   </script>
 </body>
-
 </html>

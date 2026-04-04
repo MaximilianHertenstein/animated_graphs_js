@@ -1,158 +1,113 @@
 <!doctype html>
 <html lang="de">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Power Function (Canvas)</title>
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            background: #0f1117;
-            color: #e7ecf3;
-            font-family: system-ui, sans-serif;
-        }
-
-        .app {
-            width: 100vw;
-            height: 100vh;
-            display: grid;
-            grid-template-rows: auto 1fr;
-            gap: 10px;
-            padding: 12px;
-        }
-
-        .controls {
-            display: grid;
-            gap: 8px;
-        }
-
-        .row {
-            display: grid;
-            grid-template-columns: 24px 1fr 50px;
-            gap: 8px;
-            align-items: center;
-        }
-
-        #plot {
-            width: 100%;
-            height: 100%;
-            background: #121826;
-            border: 1px solid #2a3347;
-            display: block;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Power Function (Canvas)</title>
+  <link rel="stylesheet" href="shared-app.css">
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
-
 <body>
-    <main class="app">
-        <section class="controls">
-            <div class="row">
-                <label for="a">a</label>
-                <input id="a" type="range" min="-5" max="5" step="0.1" value="1">
-                <output id="aOut">1.0</output>
-            </div>
-            <div class="row">
-                <label for="n">n</label>
-                <input id="n" type="range" min="-4" max="8" step="1" value="2">
-                <output id="nOut">2</output>
-            </div>
-        </section>
+  <main class="app">
+    <section class="controls">
+      <div class="row"><label for="a">a</label><input id="a" type="range" min="-5" max="5" step="0.1" value="1"><output id="aOut">1.0</output></div>
+      <div class="row"><label for="n">n</label><input id="n" type="range" min="-4" max="8" step="1" value="2"><output id="nOut">2</output></div>
+    </section>
+    <div id="formula" class="formula">\(f(x)=1.0\cdot x^{2}\)</div>
+    <canvas id="plot" class="plot-surface"></canvas>
+  </main>
 
-        <canvas id="plot"></canvas>
-    </main>
+  <script>
+    const c = document.getElementById('plot');
+    const ctx = c.getContext('2d');
+    const aS = document.getElementById('a');
+    const nS = document.getElementById('n');
+    const aO = document.getElementById('aOut');
+    const nO = document.getElementById('nOut');
+    const formula = document.getElementById('formula');
 
-    <script>
-        const c = document.getElementById('plot');
-        const ctx = c.getContext('2d');
-        const aS = document.getElementById('a');
-        const nS = document.getElementById('n');
-        const aO = document.getElementById('aOut');
-        const nO = document.getElementById('nOut');
+    function resizeCanvas() {
+      const r = window.devicePixelRatio || 1;
+      const w = c.clientWidth;
+      const h = c.clientHeight;
+      c.width = w * r;
+      c.height = h * r;
+      ctx.setTransform(r, 0, 0, r, 0, 0);
+    }
 
-        function rs() {
-            const r = window.devicePixelRatio || 1;
-            const w = c.clientWidth;
-            const h = c.clientHeight;
-            c.width = w * r;
-            c.height = h * r;
-            ctx.setTransform(r, 0, 0, r, 0, 0);
+    const tx = (x, w, p) => p + ((x + 5) / 10) * (w - 2 * p);
+    const ty = (y, h, p) => h - p - ((y + 5) / 10) * (h - 2 * p);
+
+    function draw() {
+      const a = parseFloat(aS.value);
+      const n = parseInt(nS.value, 10);
+      aO.textContent = a.toFixed(1);
+      nO.textContent = String(n);
+      formula.innerHTML = `\\(f(x)=${a.toFixed(1)}\\cdot x^{${n}}\\)`;
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise([formula]).catch(() => {});
+      }
+
+      const w = c.clientWidth;
+      const h = c.clientHeight;
+      const p = 36;
+
+      ctx.fillStyle = '#121826';
+      ctx.fillRect(0, 0, w, h);
+
+      ctx.strokeStyle = 'rgba(255,255,255,.15)';
+      for (let i = -5; i <= 5; i++) {
+        const x = tx(i, w, p);
+        const y = ty(i, h, p);
+        ctx.beginPath();
+        ctx.moveTo(x, p);
+        ctx.lineTo(x, h - p);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(p, y);
+        ctx.lineTo(w - p, y);
+        ctx.stroke();
+      }
+
+      ctx.strokeStyle = '#f6f8fb';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(p, ty(0, h, p));
+      ctx.lineTo(w - p, ty(0, h, p));
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(tx(0, w, p), p);
+      ctx.lineTo(tx(0, w, p), h - p);
+      ctx.stroke();
+
+      ctx.strokeStyle = '#5eead4';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      let first = true;
+      for (let i = 0; i <= 4000; i++) {
+        const x = -5 + (10 * i / 4000);
+        const y = a * Math.pow(Math.abs(x), n) * (x < 0 && n % 2 !== 0 ? -1 : 1);
+        const px = tx(x, w, p);
+        const py = ty(y, h, p);
+        if (first) {
+          ctx.moveTo(px, py);
+          first = false;
+        } else {
+          ctx.lineTo(px, py);
         }
+      }
+      ctx.stroke();
+    }
 
-        const tx = (x, w, p) => p + ((x + 5) / 10) * (w - 2 * p);
-        const ty = (y, h, p) => h - p - ((y + 5) / 10) * (h - 2 * p);
+    function render() {
+      resizeCanvas();
+      draw();
+    }
 
-        function draw() {
-            const a = parseFloat(aS.value);
-            const n = parseInt(nS.value, 10);
-            aO.textContent = a.toFixed(1);
-            nO.textContent = String(n);
-
-            const w = c.clientWidth;
-            const h = c.clientHeight;
-            const p = 36;
-
-            ctx.fillStyle = '#121826';
-            ctx.fillRect(0, 0, w, h);
-
-            ctx.strokeStyle = 'rgba(255,255,255,.15)';
-            for (let i = -5; i <= 5; i++) {
-                const x = tx(i, w, p);
-                const y = ty(i, h, p);
-                ctx.beginPath();
-                ctx.moveTo(x, p);
-                ctx.lineTo(x, h - p);
-                ctx.stroke();
-                ctx.beginPath();
-                ctx.moveTo(p, y);
-                ctx.lineTo(w - p, y);
-                ctx.stroke();
-            }
-
-            ctx.strokeStyle = '#f6f8fb';
-            ctx.lineWidth = 1.5;
-            ctx.beginPath();
-            ctx.moveTo(p, ty(0, h, p));
-            ctx.lineTo(w - p, ty(0, h, p));
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(tx(0, w, p), p);
-            ctx.lineTo(tx(0, w, p), h - p);
-            ctx.stroke();
-
-            ctx.strokeStyle = '#5eead4';
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            let first = true;
-            for (let i = 0; i <= 4000; i++) {
-                const x = -5 + 10 * i / 4000;
-                const y = a * Math.pow(Math.abs(x), n) * (x < 0 && n % 2 !== 0 ? -1 : 1);
-                const px = tx(x, w, p);
-                const py = ty(y, h, p);
-                if (first) {
-                    ctx.moveTo(px, py);
-                    first = false;
-                } else {
-                    ctx.lineTo(px, py);
-                }
-            }
-            ctx.stroke();
-        }
-
-        function render() {
-            rs();
-            draw();
-        }
-
-        aS.addEventListener('input', draw);
-        nS.addEventListener('input', draw);
-        window.addEventListener('resize', render);
-        render();
-    </script>
+    aS.addEventListener('input', draw);
+    nS.addEventListener('input', draw);
+    window.addEventListener('resize', render);
+    render();
+  </script>
 </body>
-
 </html>

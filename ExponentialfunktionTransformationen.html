@@ -1,2 +1,77 @@
 <!doctype html>
-<html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Exponential Function (SVG)</title><style>*{box-sizing:border-box}body{margin:0;background:#0f1117;color:#e7ecf3;font-family:system-ui,sans-serif}.app{width:100vw;height:100vh;display:grid;grid-template-rows:auto 1fr;gap:10px;padding:12px}.controls{display:grid;gap:8px}.row{display:grid;grid-template-columns:24px 1fr 50px;gap:8px;align-items:center}#plot{width:100%;height:100%;background:#121826;border:1px solid #2a3347}</style></head><body><main class="app"><section class="controls"><div class="row"><label for="a">a</label><input id="a" type="range" min="-5" max="5" step="0.1" value="1"><output id="aOut">1.0</output></div><div class="row"><label for="q">q</label><input id="q" type="range" min="0" max="5" step="0.1" value="1"><output id="qOut">1.0</output></div><div class="row"><label for="c">c</label><input id="c" type="range" min="-5" max="5" step="0.1" value="0"><output id="cOut">0.0</output></div></section><svg id="plot" viewBox="0 0 1000 700" preserveAspectRatio="none"></svg></main><script>const s=document.getElementById('plot'),aS=document.getElementById('a'),qS=document.getElementById('q'),cS=document.getElementById('c'),aO=document.getElementById('aOut'),qO=document.getElementById('qOut'),cO=document.getElementById('cOut');const min=-5,max=5,W=1000,H=700,p=60,tx=x=>p+((x-min)/(max-min))*(W-2*p),ty=y=>H-p-((y-min)/(max-min))*(H-2*p);function r(){const a=parseFloat(aS.value),q=parseFloat(qS.value),c=parseFloat(cS.value);aO.textContent=a.toFixed(1);qO.textContent=q.toFixed(1);cO.textContent=c.toFixed(1);let html='';for(let i=-5;i<=5;i++){html+=`<line x1='${tx(i)}' y1='${p}' x2='${tx(i)}' y2='${H-p}' stroke='rgba(255,255,255,.15)'/><line x1='${p}' y1='${ty(i)}' x2='${W-p}' y2='${ty(i)}' stroke='rgba(255,255,255,.15)'/>`;html+=`<text x='${tx(i)}' y='${ty(0)+18}' fill='#d7dfeb' font-size='12' text-anchor='middle'>${i}</text><text x='${tx(0)-10}' y='${ty(i)+4}' fill='#d7dfeb' font-size='12' text-anchor='end'>${i}</text>`;}html+=`<line x1='${p}' y1='${ty(0)}' x2='${W-p}' y2='${ty(0)}' stroke='#f6f8fb' stroke-width='2'/><line x1='${tx(0)}' y1='${p}' x2='${tx(0)}' y2='${H-p}' stroke='#f6f8fb' stroke-width='2'/>`;let pts='';for(let i=0;i<=4000;i++){const x=min+(max-min)*i/4000,y=a*Math.pow(q,x)+c;pts+=`${tx(x)},${ty(y)} `;}html+=`<polyline points='${pts}' fill='none' stroke='#5eead4' stroke-width='3'/>`;s.innerHTML=html;}aS.addEventListener('input',r);qS.addEventListener('input',r);cS.addEventListener('input',r);r();</script></body></html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exponential Function (SVG)</title>
+  <link rel="stylesheet" href="shared-app.css">
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+  <main class="app">
+    <section class="controls">
+      <div class="row"><label for="a">a</label><input id="a" type="range" min="-5" max="5" step="0.1" value="1"><output id="aOut">1.0</output></div>
+      <div class="row"><label for="q">q</label><input id="q" type="range" min="0" max="5" step="0.1" value="1"><output id="qOut">1.0</output></div>
+      <div class="row"><label for="c">c</label><input id="c" type="range" min="-5" max="5" step="0.1" value="0"><output id="cOut">0.0</output></div>
+    </section>
+    <div id="formula" class="formula">\(f(x)=1.0\cdot 1.0^{x}+0.0\)</div>
+    <svg id="plot" class="plot-surface" viewBox="0 0 1000 700" preserveAspectRatio="none"></svg>
+  </main>
+
+  <script>
+    const s = document.getElementById('plot');
+    const aS = document.getElementById('a');
+    const qS = document.getElementById('q');
+    const cS = document.getElementById('c');
+    const aO = document.getElementById('aOut');
+    const qO = document.getElementById('qOut');
+    const cO = document.getElementById('cOut');
+    const formula = document.getElementById('formula');
+
+    const min = -5;
+    const max = 5;
+    const W = 1000;
+    const H = 700;
+    const p = 60;
+
+    const tx = (x) => p + ((x - min) / (max - min)) * (W - 2 * p);
+    const ty = (y) => H - p - ((y - min) / (max - min)) * (H - 2 * p);
+
+    function render() {
+      const a = parseFloat(aS.value);
+      const q = parseFloat(qS.value);
+      const c = parseFloat(cS.value);
+      aO.textContent = a.toFixed(1);
+      qO.textContent = q.toFixed(1);
+      cO.textContent = c.toFixed(1);
+      formula.innerHTML = `\\(f(x)=${a.toFixed(1)}\\cdot ${q.toFixed(1)}^{x}+${c.toFixed(1)}\\)`;
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise([formula]).catch(() => {});
+      }
+
+      let html = "";
+      for (let i = -5; i <= 5; i++) {
+        html += `<line x1='${tx(i)}' y1='${p}' x2='${tx(i)}' y2='${H - p}' stroke='rgba(255,255,255,.15)'/>`;
+        html += `<line x1='${p}' y1='${ty(i)}' x2='${W - p}' y2='${ty(i)}' stroke='rgba(255,255,255,.15)'/>`;
+      }
+
+      html += `<line x1='${p}' y1='${ty(0)}' x2='${W - p}' y2='${ty(0)}' stroke='#f6f8fb' stroke-width='2'/>`;
+      html += `<line x1='${tx(0)}' y1='${p}' x2='${tx(0)}' y2='${H - p}' stroke='#f6f8fb' stroke-width='2'/>`;
+
+      let pts = "";
+      for (let i = 0; i <= 4000; i++) {
+        const x = min + ((max - min) * i) / 4000;
+        const y = a * Math.pow(q, x) + c;
+        pts += `${tx(x)},${ty(y)} `;
+      }
+      html += `<polyline points='${pts}' fill='none' stroke='#5eead4' stroke-width='3'/>`;
+      s.innerHTML = html;
+    }
+
+    aS.addEventListener('input', render);
+    qS.addEventListener('input', render);
+    cS.addEventListener('input', render);
+    render();
+  </script>
+</body>
+</html>

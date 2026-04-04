@@ -1,72 +1,31 @@
 <!doctype html>
 <html lang="de">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Power Function (uPlot)</title>
+  <link rel="stylesheet" href="shared-app.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uplot@1.6.24/dist/uPlot.min.css">
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      background: #0f1117;
-      color: #e7ecf3;
-      font-family: system-ui, sans-serif;
-    }
-
-    .app {
-      width: 100vw;
-      height: 100vh;
-      display: grid;
-      grid-template-rows: auto 1fr;
-      gap: 10px;
-      padding: 12px;
-    }
-
-    .controls {
-      display: grid;
-      gap: 8px;
-    }
-
-    .row {
-      display: grid;
-      grid-template-columns: 24px 1fr 50px;
-      gap: 8px;
-      align-items: center;
-    }
-
-    #plot {
-      width: 100%;
-      height: 100%;
-      min-height: 0;
-      background: #121826;
-      border: 1px solid #2a3347;
-    }
-  </style>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
-
 <body>
   <main class="app">
     <section class="controls">
-      <div class="row"><label for="a">a</label><input id="a" type="range" min="-5" max="5" step="0.1" value="1"><output
-          id="aOut">1.0</output></div>
-      <div class="row"><label for="n">n</label><input id="n" type="range" min="-4" max="8" step="1" value="2"><output
-          id="nOut">2</output></div>
+      <div class="row"><label for="a">a</label><input id="a" type="range" min="-5" max="5" step="0.1" value="1"><output id="aOut">1.0</output></div>
+      <div class="row"><label for="n">n</label><input id="n" type="range" min="-4" max="8" step="1" value="2"><output id="nOut">2</output></div>
     </section>
-    <div id="plot"></div>
+    <div id="formula" class="formula">\(f(x)=1.0\cdot x^{2}\)</div>
+    <div id="plot" class="plot-surface"></div>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/uplot@1.6.24/dist/uPlot.iife.min.js"></script>
   <script>
-    const aS = document.getElementById('a');
-    const nS = document.getElementById('n');
-    const aOut = document.getElementById('aOut');
-    const nOut = document.getElementById('nOut');
-    const plotEl = document.getElementById('plot');
+    const aS = document.getElementById("a");
+    const nS = document.getElementById("n");
+    const aOut = document.getElementById("aOut");
+    const nOut = document.getElementById("nOut");
+    const formula = document.getElementById("formula");
+    const plotEl = document.getElementById("plot");
     let u;
 
     const ticks = (u, i, min, max) => {
@@ -76,11 +35,13 @@
     };
 
     function data(a, n) {
-      const xs = [], ys = [];
+      const xs = [];
+      const ys = [];
       for (let i = 0; i <= 3000; i++) {
         const x = -5 + (10 * i / 3000);
         const y = a * Math.pow(Math.abs(x), n) * (x < 0 && n % 2 !== 0 ? -1 : 1);
-        xs.push(x); ys.push(Number.isFinite(y) ? y : null);
+        xs.push(x);
+        ys.push(Number.isFinite(y) ? y : null);
       }
       return [xs, ys];
     }
@@ -92,32 +53,48 @@
         pxAlign: 0,
         scales: { x: { auto: false, range: () => [-5, 5] }, y: { auto: false, range: () => [-5, 5] } },
         axes: [
-          { stroke: '#d7dfeb', grid: { stroke: 'rgba(255,255,255,0.15)' }, ticks: { show: true }, splits: ticks, values: (u, s) => s },
-          { stroke: '#d7dfeb', grid: { stroke: 'rgba(255,255,255,0.15)' }, ticks: { show: true }, splits: ticks, values: (u, s) => s }
+          { stroke: "#d7dfeb", grid: { stroke: "rgba(255,255,255,0.15)" }, ticks: { show: true }, splits: ticks, values: (u, s) => s },
+          { stroke: "#d7dfeb", grid: { stroke: "rgba(255,255,255,0.15)" }, ticks: { show: true }, splits: ticks, values: (u, s) => s }
         ],
         hooks: {
           draw: [(u) => {
-            const ctx = u.ctx, x0 = u.valToPos(0, 'x', true), y0 = u.valToPos(0, 'y', true);
-            ctx.save(); ctx.strokeStyle = '#f6f8fb'; ctx.lineWidth = 1.5;
-            ctx.beginPath(); ctx.moveTo(u.bbox.left, y0); ctx.lineTo(u.bbox.left + u.bbox.width, y0); ctx.stroke();
-            ctx.beginPath(); ctx.moveTo(x0, u.bbox.top); ctx.lineTo(x0, u.bbox.top + u.bbox.height); ctx.stroke();
+            const ctx = u.ctx;
+            const x0 = u.valToPos(0, "x", true);
+            const y0 = u.valToPos(0, "y", true);
+            ctx.save();
+            ctx.strokeStyle = "#f6f8fb";
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(u.bbox.left, y0);
+            ctx.lineTo(u.bbox.left + u.bbox.width, y0);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x0, u.bbox.top);
+            ctx.lineTo(x0, u.bbox.top + u.bbox.height);
+            ctx.stroke();
             ctx.restore();
           }]
         },
-        series: [{}, { stroke: '#5eead4', width: 3 }],
+        series: [{}, { stroke: "#5eead4", width: 3 }]
       };
     }
 
     function render() {
-      const a = parseFloat(aS.value), n = parseInt(nS.value, 10);
-      aOut.textContent = a.toFixed(1); nOut.textContent = String(n);
+      const a = parseFloat(aS.value);
+      const n = parseInt(nS.value, 10);
+      aOut.textContent = a.toFixed(1);
+      nOut.textContent = String(n);
+      formula.innerHTML = `\\(f(x)=${a.toFixed(1)}\\cdot x^{${n}}\\)`;
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise([formula]).catch(() => {});
+      }
       if (!u) u = new uPlot(opts(), data(a, n), plotEl);
       else u.setData(data(a, n));
     }
 
-    aS.addEventListener('input', render);
-    nS.addEventListener('input', render);
-    window.addEventListener('resize', () => {
+    aS.addEventListener("input", render);
+    nS.addEventListener("input", render);
+    window.addEventListener("resize", () => {
       if (!u) return;
       u.setSize({ width: plotEl.clientWidth, height: plotEl.clientHeight });
       render();
@@ -125,5 +102,4 @@
     render();
   </script>
 </body>
-
 </html>
