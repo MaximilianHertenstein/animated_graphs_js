@@ -47,12 +47,12 @@
           <tbody>
             <tr>
               <td><a href="power_plotline.html">power_plotline</a></td>
-              <td>plotLine.js (lokal), Canvas</td>
-              <td>39</td>
-              <td>1.3 KB</td>
-              <td>sehr schnell</td>
-              <td>MathJax, shared-power.js, plotLine.js</td>
-              <td>klein (eigene lokale Plot-Lib)</td>
+              <td>plotLine.js (SVG)</td>
+              <td>57</td>
+              <td>1.6 KB</td>
+              <td>schnell</td>
+              <td>plotLine.js, MathJax, shared-power.js</td>
+              <td>klein</td>
             </tr>
             <tr>
               <td><a href="power-function-explorer.html">power_canvas</a></td>
@@ -163,7 +163,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr><td><a href="power_plotline.html">power_plotline</a></td><td>1</td><td>1</td><td>1</td><td>1.0</td></tr>
+            <tr><td><a href="power_plotline.html">power_plotline</a></td><td>2</td><td>1</td><td>1</td><td>1.3</td></tr>
             <tr><td><a href="power-function-explorer.html">power_canvas</a></td><td>1</td><td>1</td><td>2</td><td>1.3</td></tr>
             <tr><td><a href="power_functionplot.html">power_functionplot</a></td><td>2</td><td>1</td><td>2</td><td>1.7</td></tr>
             <tr><td><a href="power_uplot.html">power_uplot</a></td><td>2</td><td>1</td><td>2</td><td>1.7</td></tr>
@@ -174,6 +174,101 @@
             <tr><td><a href="power_mjsplot.html">power_mjsplot</a></td><td>3</td><td>2</td><td>4</td><td>3.0</td></tr>
             <tr><td><a href="power_jsxgraph.html">power_jsxgraph</a></td><td>3</td><td>3</td><td>4</td><td>3.3</td></tr>
             <tr><td><a href="plotly_test.html">power_plotly</a></td><td>4</td><td>3</td><td>3</td><td>3.3</td></tr>
+          </tbody>
+        </table>
+      </figure>
+
+      <h3>Release-Daten der Bibliotheken</h3>
+      <p><small>Bei exakt gepinnten Versionen ist das Datum eindeutig. Bei offenen CDN-Links wie <code>chart.js</code>, <code>jsxgraph</code> oder <code>function-plot</code> bezieht sich das Datum auf den zum Recherchezeitpunkt sichtbaren aktuellen Release-Stand des jeweiligen Streams.</small></p>
+      <figure>
+        <table>
+          <thead>
+            <tr>
+              <th>Variante</th>
+              <th>Bibliothek</th>
+              <th>Verwendete Version/Quelle</th>
+              <th>Release-Datum</th>
+              <th>Hinweis</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="power_plotline.html">power_plotline</a></td>
+              <td>plotLine.js</td>
+              <td>Website-Skript ohne feste Versionsnummer</td>
+              <td>nicht fixiert</td>
+              <td>Direkt von polarwinkel.github.io eingebunden, kein gepinnter Tag</td>
+            </tr>
+            <tr>
+              <td><a href="power-function-explorer.html">power_canvas</a></td>
+              <td>Canvas API</td>
+              <td>Browser-API</td>
+              <td>browserabhaengig</td>
+              <td>Keine externe Plot-Bibliothek</td>
+            </tr>
+            <tr>
+              <td><a href="power_functionplot.html">power_functionplot</a></td>
+              <td>function-plot</td>
+              <td>jsDelivr ohne feste Versionsnummer</td>
+              <td>Jan 3</td>
+              <td>Entspricht dem aktuellen Latest-Release v1.25.3, aber nicht hart gepinnt</td>
+            </tr>
+            <tr>
+              <td><a href="power_uplot.html">power_uplot</a></td>
+              <td>uPlot</td>
+              <td>1.6.24</td>
+              <td>Jan 27, 2023</td>
+              <td>Exakt gepinnt</td>
+            </tr>
+            <tr>
+              <td><a href="test.html">power_chartjs</a></td>
+              <td>Chart.js</td>
+              <td>jsDelivr ohne feste Versionsnummer</td>
+              <td>Oct 13, 2025</td>
+              <td>Entspricht dem sichtbaren Latest-Release v4.5.1, aber nicht hart gepinnt</td>
+            </tr>
+            <tr>
+              <td><a href="power_echarts.html">power_echarts</a></td>
+              <td>ECharts</td>
+              <td>@5 Major-Stream</td>
+              <td>Dec 28, 2024</td>
+              <td>Bezieht sich auf 5.6.0 innerhalb des verwendeten 5.x-Streams</td>
+            </tr>
+            <tr>
+              <td><a href="power_observable.html">power_observable</a></td>
+              <td>Observable Plot</td>
+              <td>@0.6 Minor-Stream</td>
+              <td>Feb 14, 2025</td>
+              <td>Bezieht sich auf v0.6.17 innerhalb des verwendeten 0.6-Streams</td>
+            </tr>
+            <tr>
+              <td><a href="power_mjsplot.html">power_mjsplot</a></td>
+              <td>D3</td>
+              <td>@7 Major-Stream</td>
+              <td>Mar 12, 2024</td>
+              <td>Bezieht sich auf v7.9.0 innerhalb des verwendeten 7.x-Streams</td>
+            </tr>
+            <tr>
+              <td><a href="power_jsxgraph.html">power_jsxgraph</a></td>
+              <td>JSXGraph</td>
+              <td>jsDelivr ohne feste Versionsnummer</td>
+              <td>Nov 19, 2025</td>
+              <td>Entspricht dem sichtbaren Latest-Release v1.12.2, aber nicht hart gepinnt</td>
+            </tr>
+            <tr>
+              <td><a href="plotly_test.html">power_plotly</a></td>
+              <td>Plotly</td>
+              <td>2.35.2</td>
+              <td>Sep 10, 2024</td>
+              <td>Exakt gepinnt</td>
+            </tr>
+            <tr>
+              <td><a href="ExponentialfunktionTransformationen.html">exponential_transformationen</a></td>
+              <td>SVG</td>
+              <td>Browser-API</td>
+              <td>browserabhaengig</td>
+              <td>Keine externe Plot-Bibliothek</td>
+            </tr>
           </tbody>
         </table>
       </figure>
