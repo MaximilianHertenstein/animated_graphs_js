@@ -13,19 +13,7 @@
     <article>
       <h1>Projektstart</h1>
       <p>Wähle eine Seite aus, um direkt zu starten.</p>
-      <ul>
-        <li><a href="test.html">power_chartjs</a></li>
-        <li><a href="power-function-explorer.html">power_canvas</a></li>
-        <li><a href="power_functionplot.html">power_functionplot</a></li>
-        <li><a href="plotly_test.html">power_plotly</a></li>
-        <li><a href="power_echarts.html">power_echarts</a></li>
-        <li><a href="power_jsxgraph.html">power_jsxgraph</a></li>
-        <li><a href="power_mjsplot.html">power_mjsplot</a></li>
-        <li><a href="power_observable.html">power_observable</a></li>
-        <li><a href="power_plotline.html">power_plotline</a></li>
-        <li><a href="power_uplot.html">power_uplot</a></li>
-        <li><a href="ExponentialfunktionTransformationen.html">exponential_transformationen</a></li>
-      </ul>
+      <ul id="nav-list"></ul>
     </article>
 
     <article>
@@ -44,107 +32,7 @@
               <th>Bibliotheksgroesse (grob)</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <td><a href="power_plotline.html">power_plotline</a></td>
-              <td>plotLine.js (SVG)</td>
-              <td>57</td>
-              <td>1.6 KB</td>
-              <td>schnell</td>
-              <td>plotLine.js, MathJax, shared-power.js</td>
-              <td>klein</td>
-            </tr>
-            <tr>
-              <td><a href="power_observable.html">power_observable</a></td>
-              <td>Observable Plot (+ D3 intern)</td>
-              <td>59</td>
-              <td>2.3 KB</td>
-              <td>schnell</td>
-              <td>Observable Plot (ESM), MathJax, shared-power.js</td>
-              <td>mittel</td>
-            </tr>
-            <tr>
-              <td><a href="power_echarts.html">power_echarts</a></td>
-              <td>ECharts</td>
-              <td>62</td>
-              <td>2.3 KB</td>
-              <td>schnell bis mittel</td>
-              <td>ECharts, MathJax, shared-power.js</td>
-              <td>gross</td>
-            </tr>
-            <tr>
-              <td><a href="test.html">power_chartjs</a></td>
-              <td>Chart.js</td>
-              <td>76</td>
-              <td>2.4 KB</td>
-              <td>schnell</td>
-              <td>Chart.js, MathJax, shared-power.js</td>
-              <td>mittel</td>
-            </tr>
-            <tr>
-              <td><a href="plotly_test.html">power_plotly</a></td>
-              <td>Plotly</td>
-              <td>85</td>
-              <td>2.9 KB</td>
-              <td>eher langsamer Start</td>
-              <td>Plotly, MathJax, shared-power.js</td>
-              <td>sehr gross</td>
-            </tr>
-            <tr>
-              <td><a href="power_uplot.html">power_uplot</a></td>
-              <td>uPlot</td>
-              <td>88</td>
-              <td>3.5 KB</td>
-              <td>sehr schnell</td>
-              <td>uPlot, MathJax, shared-power.js</td>
-              <td>klein (uPlot leichtgewichtig)</td>
-            </tr>
-            <tr>
-              <td><a href="power_mjsplot.html">power_mjsplot</a></td>
-              <td>D3 (ESM)</td>
-              <td>97</td>
-              <td>3.6 KB</td>
-              <td>mittel</td>
-              <td>D3 (ESM), MathJax, shared-power.js</td>
-              <td>mittel bis gross</td>
-            </tr>
-            <tr>
-              <td><a href="power_functionplot.html">power_functionplot</a></td>
-              <td>function-plot</td>
-              <td>99</td>
-              <td>2.6 KB</td>
-              <td>schnell</td>
-              <td>function-plot, MathJax, shared-power.js</td>
-              <td>mittel</td>
-            </tr>
-            <tr>
-              <td><a href="power_jsxgraph.html">power_jsxgraph</a></td>
-              <td>JSXGraph</td>
-              <td>100</td>
-              <td>3.6 KB</td>
-              <td>mittel</td>
-              <td>JSXGraph, MathJax, shared-power.js</td>
-              <td>gross</td>
-            </tr>
-            <tr>
-              <td><a href="ExponentialfunktionTransformationen.html">exponential_transformationen</a></td>
-              <td>SVG (ohne externe Plot-Lib)</td>
-              <td>103</td>
-              <td>3.7 KB</td>
-              <td>schnell</td>
-              <td>MathJax</td>
-              <td>sehr klein (kein externes Plot-Framework)</td>
-            </tr>
-            <tr>
-              <td><a href="power-function-explorer.html">power_canvas</a></td>
-              <td>Canvas (ohne externe Plot-Lib)</td>
-              <td>106</td>
-              <td>3.1 KB</td>
-              <td>sehr schnell</td>
-              <td>MathJax, shared-power.js</td>
-              <td>sehr klein (keine externe Plot-Lib)</td>
-            </tr>
-          </tbody>
+          <tbody id="overview-body"></tbody>
         </table>
       </figure>
       <p><small>Hinweis: Die wahrgenommene Geschwindigkeit haengt stark von Netzwerk, Browser und Cache ab. Die eigentliche Rechenlast fuer die Funktion ist bei allen Varianten klein.</small></p>
@@ -162,24 +50,12 @@
               <th>Gesamt (Mittel)</th>
             </tr>
           </thead>
-          <tbody>
-            <tr><td><a href="power_plotline.html">power_plotline</a></td><td>2</td><td>1</td><td>1</td><td>1.3</td></tr>
-            <tr><td><a href="power_observable.html">power_observable</a></td><td>2</td><td>2</td><td>3</td><td>2.3</td></tr>
-            <tr><td><a href="power_echarts.html">power_echarts</a></td><td>3</td><td>2</td><td>3</td><td>2.7</td></tr>
-            <tr><td><a href="test.html">power_chartjs</a></td><td>2</td><td>2</td><td>2</td><td>2.0</td></tr>
-            <tr><td><a href="plotly_test.html">power_plotly</a></td><td>4</td><td>3</td><td>3</td><td>3.3</td></tr>
-            <tr><td><a href="power_uplot.html">power_uplot</a></td><td>2</td><td>1</td><td>2</td><td>1.7</td></tr>
-            <tr><td><a href="power_mjsplot.html">power_mjsplot</a></td><td>3</td><td>2</td><td>4</td><td>3.0</td></tr>
-            <tr><td><a href="power_functionplot.html">power_functionplot</a></td><td>2</td><td>1</td><td>2</td><td>1.7</td></tr>
-            <tr><td><a href="power_jsxgraph.html">power_jsxgraph</a></td><td>3</td><td>3</td><td>4</td><td>3.3</td></tr>
-            <tr><td><a href="ExponentialfunktionTransformationen.html">exponential_transformationen</a></td><td>1</td><td>2</td><td>3</td><td>2.0</td></tr>
-            <tr><td><a href="power-function-explorer.html">power_canvas</a></td><td>1</td><td>1</td><td>2</td><td>1.3</td></tr>
-          </tbody>
+          <tbody id="score-body"></tbody>
         </table>
       </figure>
 
       <h3>Release-Daten der Bibliotheken</h3>
-      <p><small>Bei exakt gepinnten Versionen ist das Datum eindeutig. Bei offenen CDN-Links wie <code>chart.js</code>, <code>jsxgraph</code> oder <code>function-plot</code> bezieht sich das Datum auf den zum Recherchezeitpunkt sichtbaren aktuellen Release-Stand des jeweiligen Streams.</small></p>
+      <p><small>Diese Tabelle zeigt das erste bekannte Erscheinungsdatum der Bibliothek (bei npm-Paketen: <code>time.created</code>). Browser-APIs wie Canvas/SVG haben kein einzelnes Release-Datum.</small></p>
       <figure>
         <table>
           <thead>
@@ -191,89 +67,136 @@
               <th>Hinweis</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <td><a href="power_plotline.html">power_plotline</a></td>
-              <td>plotLine.js</td>
-              <td>Website-Skript ohne feste Versionsnummer</td>
-              <td>nicht fixiert</td>
-              <td>Direkt von polarwinkel.github.io eingebunden, kein gepinnter Tag</td>
-            </tr>
-            <tr>
-              <td><a href="power_observable.html">power_observable</a></td>
-              <td>Observable Plot</td>
-              <td>@0.6 Minor-Stream</td>
-              <td>Feb 14, 2025</td>
-              <td>Bezieht sich auf v0.6.17 innerhalb des verwendeten 0.6-Streams</td>
-            </tr>
-            <tr>
-              <td><a href="power_echarts.html">power_echarts</a></td>
-              <td>ECharts</td>
-              <td>@5 Major-Stream</td>
-              <td>Dec 28, 2024</td>
-              <td>Bezieht sich auf 5.6.0 innerhalb des verwendeten 5.x-Streams</td>
-            </tr>
-            <tr>
-              <td><a href="test.html">power_chartjs</a></td>
-              <td>Chart.js</td>
-              <td>jsDelivr ohne feste Versionsnummer</td>
-              <td>Oct 13, 2025</td>
-              <td>Entspricht dem sichtbaren Latest-Release v4.5.1, aber nicht hart gepinnt</td>
-            </tr>
-            <tr>
-              <td><a href="plotly_test.html">power_plotly</a></td>
-              <td>Plotly</td>
-              <td>2.35.2</td>
-              <td>Sep 10, 2024</td>
-              <td>Exakt gepinnt</td>
-            </tr>
-            <tr>
-              <td><a href="power_uplot.html">power_uplot</a></td>
-              <td>uPlot</td>
-              <td>1.6.24</td>
-              <td>Jan 27, 2023</td>
-              <td>Exakt gepinnt</td>
-            </tr>
-            <tr>
-              <td><a href="power_mjsplot.html">power_mjsplot</a></td>
-              <td>D3</td>
-              <td>@7 Major-Stream</td>
-              <td>Mar 12, 2024</td>
-              <td>Bezieht sich auf v7.9.0 innerhalb des verwendeten 7.x-Streams</td>
-            </tr>
-            <tr>
-              <td><a href="power_functionplot.html">power_functionplot</a></td>
-              <td>function-plot</td>
-              <td>jsDelivr ohne feste Versionsnummer</td>
-              <td>Jan 3</td>
-              <td>Entspricht dem aktuellen Latest-Release v1.25.3, aber nicht hart gepinnt</td>
-            </tr>
-            <tr>
-              <td><a href="power_jsxgraph.html">power_jsxgraph</a></td>
-              <td>JSXGraph</td>
-              <td>jsDelivr ohne feste Versionsnummer</td>
-              <td>Nov 19, 2025</td>
-              <td>Entspricht dem sichtbaren Latest-Release v1.12.2, aber nicht hart gepinnt</td>
-            </tr>
-            <tr>
-              <td><a href="ExponentialfunktionTransformationen.html">exponential_transformationen</a></td>
-              <td>SVG</td>
-              <td>Browser-API</td>
-              <td>browserabhaengig</td>
-              <td>Keine externe Plot-Bibliothek</td>
-            </tr>
-            <tr>
-              <td><a href="power-function-explorer.html">power_canvas</a></td>
-              <td>Canvas API</td>
-              <td>Browser-API</td>
-              <td>browserabhaengig</td>
-              <td>Keine externe Plot-Bibliothek</td>
-            </tr>
-          </tbody>
+          <tbody id="release-body"></tbody>
         </table>
       </figure>
     </article>
   </main>
+
+  <script>
+    const variants = [
+      {
+        href: "power_plotline.html",      name: "power_plotline",
+        lib: "plotLine.js (SVG)",         lines: 57,  size: "1.6 KB", speed: "schnell",
+        deps: "plotLine.js, MathJax, shared-power.js", libSize: "klein",
+        s1: 2, s2: 1, s3: 1, sAvg: "1.3",
+        relLib: "plotLine.js", relVer: "keine Paket-Registry",
+        relDate: "nicht eindeutig", relNote: "Projektseite ohne klar versionierte Erstveroeffentlichung",
+      },
+      {
+        href: "power_observable.html",    name: "power_observable",
+        lib: "Observable Plot (+ D3)",    lines: 59,  size: "2.3 KB", speed: "schnell",
+        deps: "Observable Plot (ESM), MathJax, shared-power.js", libSize: "mittel",
+        s1: 2, s2: 2, s3: 3, sAvg: "2.3",
+        relLib: "Observable Plot", relVer: "npm Erstveroeffentlichung",
+        relDate: "May 4, 2021", relNote: "Paket: @observablehq/plot",
+      },
+      {
+        href: "power_echarts.html",       name: "power_echarts",
+        lib: "ECharts",                   lines: 62,  size: "2.3 KB", speed: "schnell bis mittel",
+        deps: "ECharts, MathJax, shared-power.js", libSize: "gross",
+        s1: 3, s2: 2, s3: 3, sAvg: "2.7",
+        relLib: "ECharts", relVer: "npm Erstveroeffentlichung",
+        relDate: "Jul 8, 2015", relNote: "Paket: echarts",
+      },
+      {
+        href: "test.html",                name: "power_chartjs",
+        lib: "Chart.js",                  lines: 76,  size: "2.4 KB", speed: "schnell",
+        deps: "Chart.js, MathJax, shared-power.js", libSize: "mittel",
+        s1: 2, s2: 2, s3: 2, sAvg: "2.0",
+        relLib: "Chart.js", relVer: "npm Erstveroeffentlichung",
+        relDate: "Jul 8, 2014", relNote: "Paket: chart.js",
+      },
+      {
+        href: "plotly_test.html",         name: "power_plotly",
+        lib: "Plotly",                    lines: 85,  size: "2.9 KB", speed: "eher langsamer Start",
+        deps: "Plotly, MathJax, shared-power.js", libSize: "sehr gross",
+        s1: 4, s2: 3, s3: 3, sAvg: "3.3",
+        relLib: "Plotly", relVer: "npm Erstveroeffentlichung",
+        relDate: "Nov 17, 2015", relNote: "Paket: plotly.js",
+      },
+      {
+        href: "power_uplot.html",         name: "power_uplot",
+        lib: "uPlot",                     lines: 88,  size: "3.5 KB", speed: "sehr schnell",
+        deps: "uPlot, MathJax, shared-power.js", libSize: "klein (uPlot leichtgewichtig)",
+        s1: 2, s2: 1, s3: 2, sAvg: "1.7",
+        relLib: "uPlot", relVer: "npm Erstveroeffentlichung",
+        relDate: "Mar 10, 2020", relNote: "Paket: uplot",
+      },
+      {
+        href: "power_mjsplot.html",       name: "power_mjsplot",
+        lib: "D3 (ESM)",                  lines: 97,  size: "3.6 KB", speed: "mittel",
+        deps: "D3 (ESM), MathJax, shared-power.js", libSize: "mittel bis gross",
+        s1: 3, s2: 2, s3: 4, sAvg: "3.0",
+        relLib: "D3", relVer: "npm Erstveroeffentlichung",
+        relDate: "Aug 18, 2011", relNote: "Paket: d3",
+      },
+      {
+        href: "power_functionplot.html",  name: "power_functionplot",
+        lib: "function-plot",             lines: 99,  size: "2.6 KB", speed: "schnell",
+        deps: "function-plot, MathJax, shared-power.js", libSize: "mittel",
+        s1: 2, s2: 1, s3: 2, sAvg: "1.7",
+        relLib: "function-plot", relVer: "npm Erstveroeffentlichung",
+        relDate: "Apr 12, 2015", relNote: "Paket: function-plot",
+      },
+      {
+        href: "power_jsxgraph.html",      name: "power_jsxgraph",
+        lib: "JSXGraph",                  lines: 100, size: "3.6 KB", speed: "mittel",
+        deps: "JSXGraph, MathJax, shared-power.js", libSize: "gross",
+        s1: 3, s2: 3, s3: 4, sAvg: "3.3",
+        relLib: "JSXGraph", relVer: "npm Erstveroeffentlichung",
+        relDate: "Jul 5, 2016", relNote: "Paket: jsxgraph",
+      },
+      {
+        href: "ExponentialfunktionTransformationen.html", name: "exponential_transformationen",
+        lib: "SVG (ohne externe Plot-Lib)", lines: 103, size: "3.7 KB", speed: "schnell",
+        deps: "MathJax", libSize: "sehr klein (kein externes Plot-Framework)",
+        s1: 1, s2: 2, s3: 3, sAvg: "2.0",
+        relLib: "SVG", relVer: "Webstandard (Browser-API)",
+        relDate: "kein einzelnes Release", relNote: "In Browsern schrittweise eingefuehrt",
+      },
+      {
+        href: "power-function-explorer.html", name: "power_canvas",
+        lib: "Canvas (ohne externe Plot-Lib)", lines: 106, size: "3.1 KB", speed: "sehr schnell",
+        deps: "MathJax, shared-power.js", libSize: "sehr klein (keine externe Plot-Lib)",
+        s1: 1, s2: 1, s3: 2, sAvg: "1.3",
+        relLib: "Canvas API", relVer: "Webstandard (Browser-API)",
+        relDate: "kein einzelnes Release", relNote: "In Browsern schrittweise eingefuehrt",
+      },
+    ];
+  </script>
+
+  <script>
+    const nav = document.getElementById("nav-list");
+    const overview = document.getElementById("overview-body");
+    const score = document.getElementById("score-body");
+    const release = document.getElementById("release-body");
+
+    nav.innerHTML = variants
+      .map(v => `<li><a href="${v.href}">${v.name}</a></li>`)
+      .join("");
+
+    overview.innerHTML = variants
+      .map(v => `<tr><td><a href="${v.href}">${v.name}</a></td><td>${v.lib}</td><td>${v.lines}</td><td>${v.size}</td><td>${v.speed}</td><td>${v.deps}</td><td>${v.libSize}</td></tr>`)
+      .join("");
+
+    score.innerHTML = variants
+      .map(v => `<tr><td><a href="${v.href}">${v.name}</a></td><td>${v.s1}</td><td>${v.s2}</td><td>${v.s3}</td><td>${v.sAvg}</td></tr>`)
+      .join("");
+
+    const releaseSorted = [...variants].sort((a, b) => {
+      const da = Date.parse(a.relDate);
+      const db = Date.parse(b.relDate);
+      if (Number.isNaN(da) && Number.isNaN(db)) return a.name.localeCompare(b.name);
+      if (Number.isNaN(da)) return 1;
+      if (Number.isNaN(db)) return -1;
+      return db - da;
+    });
+
+    release.innerHTML = releaseSorted
+      .map(v => `<tr><td><a href="${v.href}">${v.name}</a></td><td>${v.relLib}</td><td>${v.relVer}</td><td>${v.relDate}</td><td>${v.relNote}</td></tr>`)
+      .join("");
+  </script>
 </body>
 
 </html>
