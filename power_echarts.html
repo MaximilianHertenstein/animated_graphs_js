@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="de">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,11 +10,14 @@
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   <script src="shared-power.js"></script>
 </head>
+
 <body>
   <main class="app">
     <section class="controls">
-      <div class="row"><label for="a">a</label><input id="a" type="range" min="-5" max="5" step="0.1" value="1"><output id="aOut">1.0</output></div>
-      <div class="row"><label for="n">n</label><input id="n" type="range" min="-4" max="8" step="1" value="2"><output id="nOut">2</output></div>
+      <div class="row"><label for="a">a</label><input id="a" type="range" min="-5" max="5" step="0.1" value="1"><output
+          id="aOut">1.0</output></div>
+      <div class="row"><label for="n">n</label><input id="n" type="range" min="-4" max="8" step="1" value="2"><output
+          id="nOut">2</output></div>
     </section>
     <div id="formula" class="formula">\(f(x)=1.0\cdot x^{2}\)</div>
     <div id="chart" class="plot-surface"></div>
@@ -29,9 +33,7 @@
 
     function render() {
       const { a, n } = PowerShared.syncPowerUI(ui);
-
       chart.setOption({
-        animation: false,
         grid: { left: 56, right: 24, top: 24, bottom: 40 },
         xAxis: {
           type: "value", min: PowerShared.X_MIN, max: PowerShared.X_MAX, interval: 1,
@@ -53,4 +55,5 @@
     render();
   </script>
 </body>
+
 </html>

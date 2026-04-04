@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="de">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,34 +9,28 @@
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   <script src="shared-power.js"></script>
 </head>
+
 <body>
   <main class="app">
     <section class="controls">
-      <div class="row"><label for="a">a</label><input id="a" type="range" min="-5" max="5" step="0.1" value="1"><output id="aOut">1.0</output></div>
-      <div class="row"><label for="n">n</label><input id="n" type="range" min="-4" max="8" step="1" value="2"><output id="nOut">2</output></div>
+      <div class="row"><label for="a">a</label><input id="a" type="range" min="-5" max="5" step="0.1" value="1"><output
+          id="aOut">1.0</output></div>
+      <div class="row"><label for="n">n</label><input id="n" type="range" min="-4" max="8" step="1" value="2"><output
+          id="nOut">2</output></div>
     </section>
     <div id="formula" class="formula">\(f(x)=1.0\cdot x^{2}\)</div>
     <div id="plot" class="plot-surface"></div>
   </main>
-
   <script type="module">
     import * as Plot from "https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6/+esm";
-
     const ui = window.PowerShared.getPowerUI("plot");
-
     function render() {
       const { a, n } = window.PowerShared.syncPowerUI(ui);
-
       const fig = Plot.plot({
         width: ui.plotEl.clientWidth,
         height: ui.plotEl.clientHeight,
-        marginLeft: 56,
-        marginBottom: 40,
-        marginTop: 24,
-        marginRight: 24,
         x: { domain: [window.PowerShared.X_MIN, window.PowerShared.X_MAX], ticks: window.PowerShared.TICKS, label: "" },
         y: { domain: [window.PowerShared.Y_MIN, window.PowerShared.Y_MAX], ticks: window.PowerShared.TICKS, label: "" },
-        style: { background: "#121826", color: "#d7dfeb" },
         marks: [
           Plot.ruleX(window.PowerShared.TICKS.filter((value) => value !== 0), { stroke: "rgba(255,255,255,0.32)", strokeWidth: 1.2 }),
           Plot.ruleY(window.PowerShared.TICKS.filter((value) => value !== 0), { stroke: "rgba(255,255,255,0.32)", strokeWidth: 1.2 }),
@@ -44,12 +39,11 @@
           Plot.line(window.PowerShared.sampleVisiblePoints(a, n, 3000), { x: "x", y: "y", stroke: "#5eead4", strokeWidth: 3 })
         ]
       });
-
       ui.plotEl.replaceChildren(fig);
     }
-
     window.PowerShared.bindPowerUI(ui, render);
     render();
   </script>
 </body>
+
 </html>

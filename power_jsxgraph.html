@@ -12,6 +12,7 @@
   <style>
     .jxgbox {
       background: #121826;
+      margin-inline: auto;
     }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
@@ -41,6 +42,7 @@
       }
       board = JXG.JSXGraph.initBoard('box', {
         boundingbox: [PowerShared.X_MIN, PowerShared.Y_MAX, PowerShared.X_MAX, PowerShared.Y_MIN],
+        keepAspectRatio: true,
         axis: true,
         grid: true,
 
