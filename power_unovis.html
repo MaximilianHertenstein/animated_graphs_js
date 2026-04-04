@@ -54,38 +54,34 @@
     import { XYContainer, Line } from "https://cdn.jsdelivr.net/npm/@unovis/ts@1.6.4/+esm";
 
     const shared = window.PowerShared;
+    const { X_MIN, X_MAX, Y_MIN, Y_MAX } = shared;
     const ui = shared.getPowerUI("plot");
     const unovisHost = document.getElementById("uv");
-    const X_DOMAIN = [shared.X_MIN, shared.X_MAX];
-    const Y_DOMAIN = [shared.Y_MIN, shared.Y_MAX];
+    const X_DOMAIN = [X_MIN, X_MAX];
+    const Y_DOMAIN = [Y_MIN, Y_MAX];
     const SAMPLE_STEPS = 1200;
     const EPS = 0.001;
     let chart;
 
-    const makeLine = (yKey) => new Line({
-      x: (d) => d.x,
-      y: (d) => d[yKey],
-      color: "#5eead4",
-    });
-
-    const leftLine = makeLine("yLeft");
-    const rightLine = makeLine("yRight");
+    const leftLine = new Line({ x: (d) => d.x, y: (d) => d.yLeft, color: "#5eead4" });
+    const rightLine = new Line({ x: (d) => d.x, y: (d) => d.yRight, color: "#5eead4" });
 
     function buildData(a, n) {
       const isNegativeExponent = n < 0;
 
-      return shared.samplePoints(a, n, SAMPLE_STEPS, shared.X_MIN, shared.X_MAX)
-        .map((point) => {
-          const visibleY = shared.isVisibleY(point.y) ? point.y : undefined;
-          const isLeft = point.x < -EPS;
-          const isRight = point.x > EPS;
+      return shared.samplePoints(a, n, SAMPLE_STEPS, X_MIN, X_MAX).map(({ x, y }) => {
+        const visibleY = shared.isVisibleY(y) ? y : undefined;
 
-          return {
-            x: point.x,
-            yLeft: !isNegativeExponent || isLeft ? visibleY : undefined,
-            yRight: isNegativeExponent && isRight ? visibleY : undefined,
-          };
-        });
+        if (!isNegativeExponent) {
+          return { x, yLeft: visibleY, yRight: undefined };
+        }
+
+        return {
+          x,
+          yLeft: x < -EPS ? visibleY : undefined,
+          yRight: x > EPS ? visibleY : undefined,
+        };
+      });
     }
 
     function render() {
