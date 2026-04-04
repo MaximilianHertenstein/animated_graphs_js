@@ -111,8 +111,8 @@
     </div>
     <div class="row">
       <label>n</label>
-      <input type="range" id="n" min="-4" max="8" step="0.1" value="2">
-      <span class="val" id="n-out">2.0</span>
+      <input type="range" id="n" min="-4" max="8" step="1" value="2">
+      <span class="val" id="n-out">2</span>
     </div>
   </div>
 
@@ -250,7 +250,7 @@
 
   function updateExpr() {
     const formula = document.getElementById('formula');
-    formula.innerHTML = `\\(f(x)=${a.toFixed(1)}\\cdot x^{${n.toFixed(1)}}\\)`;
+    formula.innerHTML = `\\(f(x)=${a.toFixed(1)}\\cdot x^{${n}}\\)`;
     if (window.MathJax && MathJax.typesetPromise) {
       MathJax.typesetPromise([formula]).catch(() => {});
     }
@@ -263,8 +263,8 @@
   });
 
   document.getElementById('n').addEventListener('input', e => {
-    n = parseFloat(e.target.value);
-    document.getElementById('n-out').textContent = n.toFixed(1);
+    n = parseInt(e.target.value, 10);
+    document.getElementById('n-out').textContent = n;
     updateExpr(); updatePlot();
   });
 

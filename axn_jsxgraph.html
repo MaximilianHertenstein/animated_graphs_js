@@ -89,8 +89,8 @@
       </div>
       <div class="row">
         <label for="n">n</label>
-        <input id="n" type="range" min="-4" max="8" step="0.1" value="2">
-        <output id="nOut">2.0</output>
+        <input id="n" type="range" min="-4" max="8" step="1" value="2">
+        <output id="nOut">2</output>
       </div>
     </section>
 
@@ -120,14 +120,14 @@
       const box = document.getElementById('box');
 
       let a = parseFloat(aSlider.value);
-      let n = parseFloat(nSlider.value);
+      let n = parseInt(nSlider.value, 10);
       let board = null;
       let graph = null;
 
       function updateLabels() {
         aOut.textContent = a.toFixed(1);
-        nOut.textContent = n.toFixed(1);
-        formula.innerHTML = `\\(f(x)=${a.toFixed(1)}\\cdot x^{${n.toFixed(1)}}\\)`;
+        nOut.textContent = n;
+        formula.innerHTML = `\\(f(x)=${a.toFixed(1)}\\cdot x^{${n}}\\)`;
         if (window.MathJax && MathJax.typesetPromise) {
           MathJax.typesetPromise([formula]).catch(() => {});
         }
@@ -148,7 +148,7 @@
 
       function render() {
         a = parseFloat(aSlider.value);
-        n = parseFloat(nSlider.value);
+        n = parseInt(nSlider.value, 10);
         updateLabels();
         redraw();
       }
