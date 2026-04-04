@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>f(x) = a · xⁿ</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:ital,wght@0,300;0,400;1,400&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <style>
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -258,7 +259,7 @@
 
 <header>
   <div class="logo">Power Function Explorer</div>
-  <div id="formula-wrap">f(x) = 1·x²</div>
+  <div id="formula-wrap">\(f(x)=1.0\cdot x^{2}\)</div>
   <div class="domain-tag">x ∈ [−5, 5]</div>
 </header>
 
@@ -650,15 +651,14 @@ function loop(ts) {
 }
 
 /* ─── formula display ─── */
-const SUPERSCRIPTS = {'-5':'⁻⁵','-4':'⁻⁴','-3':'⁻³','-2':'⁻²','-1':'⁻¹','0':'⁰',
-  '1':'¹','2':'²','3':'³','4':'⁴','5':'⁵'};
-
 function updateFormula() {
   const a = aT, n = nT;
-  const aStr = Number.isInteger(a) ? a.toString() : a.toFixed(1);
-  const nSup = SUPERSCRIPTS[n.toString()] || ('^' + n);
-  document.getElementById('formula-wrap').textContent =
-    `f(x) = ${aStr}·x${nSup}`;
+  const aStr = a.toFixed(1);
+  const formula = document.getElementById('formula-wrap');
+  formula.innerHTML = `\\(f(x)=${aStr}\\cdot x^{${n}}\\)`;
+  if (window.MathJax && MathJax.typesetPromise) {
+    MathJax.typesetPromise([formula]).catch(() => {});
+  }
 }
 
 /* ─── slider update ─── */

@@ -2,26 +2,42 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Potenzfunktionen Applet</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   <style>
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+    }
     body {
       font-family: Arial, sans-serif;
       text-align: center;
-      margin: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 12px;
     }
     .slider-container {
-      margin: 15px;
+      margin: 0;
     }
     #chart-container {
-      width: 600px;
-      margin: auto;
+      width: 100%;
+      flex: 1;
+      min-height: 0;
+    }
+    #chart {
+      width: 100% !important;
+      height: 100% !important;
     }
   </style>
 </head>
 <body>
 
-<h2>Potenzfunktion: f(x) = a · xⁿ</h2>
+<h2>Potenzfunktion</h2>
+<div id="formula">\(f(x)=1.0\cdot x^{2}\)</div>
 
 <div class="slider-container">
   <label>Streckfaktor a: <span id="aValue">1</span></label><br>
@@ -88,8 +104,7 @@ const chart = new Chart(ctx, {
   },
   options: {
     responsive: true,
-    maintainAspectRatio: true,
-    aspectRatio: 1,
+    maintainAspectRatio: false,
     animation: false,
 
     plugins: {
@@ -124,6 +139,12 @@ const chart = new Chart(ctx, {
 
 function updateChart() {
   const { left, right } = computeData();
+
+  const formula = document.getElementById('formula');
+  formula.innerHTML = `\\(f(x)=${a.toFixed(1)}\\cdot x^{${n}}\\)`;
+  if (window.MathJax && MathJax.typesetPromise) {
+    MathJax.typesetPromise([formula]).catch(() => {});
+  }
 
   chart.data.datasets[0].data = left;
   chart.data.datasets[1].data = right;

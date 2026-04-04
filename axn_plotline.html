@@ -4,23 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ax^n Explorer (plotLine.js)</title>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   <style>
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      min-height: 100vh;
+      height: 100vh;
       background: #0f1117;
       color: #e7ecf3;
       font-family: "Segoe UI", system-ui, sans-serif;
-      display: grid;
-      place-items: center;
-      padding: 24px;
+      overflow: hidden;
     }
     .card {
-      width: min(100%, 980px);
+      width: 100vw;
+      min-height: 100vh;
       background: #171b24;
       border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 14px;
+      border-radius: 0;
       padding: 20px;
     }
     h1 {
@@ -55,7 +55,8 @@
     }
     #plot {
       width: 100%;
-      height: 520px;
+      height: calc(100vh - 180px);
+      min-height: 380px;
       border-radius: 10px;
       overflow: hidden;
       display: block;
@@ -65,7 +66,7 @@
 <body>
   <main class="card">
     <h1>ax^n Explorer (plotLine.js)</h1>
-    <p class="formula">f(x) = <span id="aVal">1.0</span> · x^<span id="nVal">2.0</span></p>
+    <p class="formula" id="formula">\(f(x)=1.0\cdot x^{2.0}\)</p>
 
     <section class="controls">
       <div class="row">
@@ -89,8 +90,7 @@
     const nSlider = document.getElementById('n');
     const aOut = document.getElementById('aOut');
     const nOut = document.getElementById('nOut');
-    const aVal = document.getElementById('aVal');
-    const nVal = document.getElementById('nVal');
+    const formula = document.getElementById('formula');
     const canvas = document.getElementById('plot');
 
     function render() {
@@ -99,8 +99,10 @@
 
       aOut.value = a.toFixed(1);
       nOut.value = n.toFixed(1);
-      aVal.textContent = a.toFixed(1);
-      nVal.textContent = n.toFixed(1);
+      formula.innerHTML = `\\(f(x)=${a.toFixed(1)}\\cdot x^{${n.toFixed(1)}}\\)`;
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise([formula]).catch(() => {});
+      }
 
       plotLine(
         canvas,

@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ax^n explorer</title>
+  <title>ax^n Explorer (uPlot)</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uplot@1.6.24/dist/uPlot.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -12,20 +13,19 @@
       font-family: system-ui, sans-serif;
       background: #0f0f11;
       color: #e8e6e1;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem;
+      height: 100vh;
+      overflow: hidden;
     }
 
     .card {
       background: #18181c;
       border: 0.5px solid rgba(255,255,255,0.1);
-      border-radius: 14px;
-      padding: 2.25rem 2.75rem;
-      width: 100%;
-      max-width: 980px;
+      border-radius: 0;
+      padding: 1.25rem 1.5rem;
+      width: 100vw;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
     .expr {
@@ -94,16 +94,14 @@
       color: #e8e6e1;
     }
 
-    #plot { width: 100%; min-height: 460px; }
+    #plot { width: 100%; min-height: 0; height: calc(100vh - 180px); }
     #plot .uplot { width: 100% !important; }
   </style>
 </head>
 <body>
 
 <div class="card">
-  <div class="expr">
-    <span class="muted">f(x) = </span><span id="aval">1.0</span>x<sup id="nval">2.0</sup>
-  </div>
+  <div class="expr" id="formula">\(f(x)=1.0\cdot x^{2.0}\)</div>
 
   <div id="controls">
     <div class="row">
@@ -146,6 +144,11 @@
     return [xs, ys];
   }
 
+  function getPlotHeight() {
+    const h = document.getElementById('plot').clientHeight;
+    return Math.max(380, h || 460);
+  }
+
   function makeOpts(w) {
     const grid  = 'rgba(255,255,255,0.14)';
     const axis  = 'rgba(255,255,255,0.55)';
@@ -160,7 +163,7 @@
     };
     return {
       width: w,
-      height: 460,
+      height: getPlotHeight(),
       padding: [12, 12, 0, 0],
       cursor: { show: true, drag: { x: false, y: false } },
       legend: { show: false },
@@ -246,8 +249,11 @@
   }
 
   function updateExpr() {
-    document.getElementById('aval').textContent = a.toFixed(1);
-    document.getElementById('nval').textContent = n.toFixed(1);
+    const formula = document.getElementById('formula');
+    formula.innerHTML = `\\(f(x)=${a.toFixed(1)}\\cdot x^{${n.toFixed(1)}}\\)`;
+    if (window.MathJax && MathJax.typesetPromise) {
+      MathJax.typesetPromise([formula]).catch(() => {});
+    }
   }
 
   document.getElementById('a').addEventListener('input', e => {
@@ -276,8 +282,10 @@
     start();
   }
 
+  updateExpr();
+
   window.addEventListener('resize', () => {
-    if (uplot) uplot.setSize({ width: document.getElementById('plot').offsetWidth, height: 460 });
+    if (uplot) uplot.setSize({ width: document.getElementById('plot').offsetWidth, height: getPlotHeight() });
   });
 </script>
 
