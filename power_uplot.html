@@ -1,24 +1,61 @@
 <!doctype html>
 <html lang="de">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ax^n (uPlot)</title>
+  <title>Power Function (uPlot)</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uplot@1.6.24/dist/uPlot.min.css">
   <style>
-    * { box-sizing: border-box; }
-    body { margin: 0; background: #0f1117; color: #e7ecf3; font-family: system-ui, sans-serif; }
-    .app { width: 100vw; height: 100vh; display: grid; grid-template-rows: auto 1fr; gap: 10px; padding: 12px; }
-    .controls { display: grid; gap: 8px; }
-    .row { display: grid; grid-template-columns: 24px 1fr 50px; gap: 8px; align-items: center; }
-    #plot { width: 100%; height: 100%; min-height: 0; background: #121826; border: 1px solid #2a3347; }
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #0f1117;
+      color: #e7ecf3;
+      font-family: system-ui, sans-serif;
+    }
+
+    .app {
+      width: 100vw;
+      height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 10px;
+      padding: 12px;
+    }
+
+    .controls {
+      display: grid;
+      gap: 8px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 24px 1fr 50px;
+      gap: 8px;
+      align-items: center;
+    }
+
+    #plot {
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      background: #121826;
+      border: 1px solid #2a3347;
+    }
   </style>
 </head>
+
 <body>
   <main class="app">
     <section class="controls">
-      <div class="row"><label for="a">a</label><input id="a" type="range" min="-5" max="5" step="0.1" value="1"><output id="aOut">1.0</output></div>
-      <div class="row"><label for="n">n</label><input id="n" type="range" min="-4" max="8" step="1" value="2"><output id="nOut">2</output></div>
+      <div class="row"><label for="a">a</label><input id="a" type="range" min="-5" max="5" step="0.1" value="1"><output
+          id="aOut">1.0</output></div>
+      <div class="row"><label for="n">n</label><input id="n" type="range" min="-4" max="8" step="1" value="2"><output
+          id="nOut">2</output></div>
     </section>
     <div id="plot"></div>
   </main>
@@ -55,16 +92,18 @@
         pxAlign: 0,
         scales: { x: { auto: false, range: () => [-5, 5] }, y: { auto: false, range: () => [-5, 5] } },
         axes: [
-          { stroke: '#d7dfeb', grid: { stroke: 'rgba(255,255,255,0.15)' }, ticks: { show: true }, splits: ticks, values: (u,s)=>s },
-          { stroke: '#d7dfeb', grid: { stroke: 'rgba(255,255,255,0.15)' }, ticks: { show: true }, splits: ticks, values: (u,s)=>s }
+          { stroke: '#d7dfeb', grid: { stroke: 'rgba(255,255,255,0.15)' }, ticks: { show: true }, splits: ticks, values: (u, s) => s },
+          { stroke: '#d7dfeb', grid: { stroke: 'rgba(255,255,255,0.15)' }, ticks: { show: true }, splits: ticks, values: (u, s) => s }
         ],
-        hooks: { draw: [(u) => {
-          const ctx = u.ctx, x0 = u.valToPos(0,'x',true), y0 = u.valToPos(0,'y',true);
-          ctx.save(); ctx.strokeStyle = '#f6f8fb'; ctx.lineWidth = 1.5;
-          ctx.beginPath(); ctx.moveTo(u.bbox.left, y0); ctx.lineTo(u.bbox.left + u.bbox.width, y0); ctx.stroke();
-          ctx.beginPath(); ctx.moveTo(x0, u.bbox.top); ctx.lineTo(x0, u.bbox.top + u.bbox.height); ctx.stroke();
-          ctx.restore();
-        }]},
+        hooks: {
+          draw: [(u) => {
+            const ctx = u.ctx, x0 = u.valToPos(0, 'x', true), y0 = u.valToPos(0, 'y', true);
+            ctx.save(); ctx.strokeStyle = '#f6f8fb'; ctx.lineWidth = 1.5;
+            ctx.beginPath(); ctx.moveTo(u.bbox.left, y0); ctx.lineTo(u.bbox.left + u.bbox.width, y0); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(x0, u.bbox.top); ctx.lineTo(x0, u.bbox.top + u.bbox.height); ctx.stroke();
+            ctx.restore();
+          }]
+        },
         series: [{}, { stroke: '#5eead4', width: 3 }],
       };
     }
@@ -86,4 +125,5 @@
     render();
   </script>
 </body>
+
 </html>
