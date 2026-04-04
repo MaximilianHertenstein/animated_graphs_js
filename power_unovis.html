@@ -44,7 +44,11 @@
       transform: translateY(-50%);
     }
 
-
+    #uv {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+    }
   </style>
 </head>
 <body>
@@ -60,71 +64,62 @@
   <script type="module">
     import { XYContainer, Line } from "https://cdn.jsdelivr.net/npm/@unovis/ts@1.6.4/+esm";
 
-    const ui = window.PowerShared.getPowerUI("plot");
+    const shared = window.PowerShared;
+    const ui = shared.getPowerUI("plot");
     const unovisHost = document.getElementById("uv");
     let chart;
-    const leftLine = new Line({
+    const lineColor = "#5eead4";
+
+    const makeLine = (yKey) => new Line({
       x: (d) => d.x,
-      y: (d) => d.yLeft,
-      color: "#5eead4",
+      y: (d) => d[yKey],
+      color: lineColor,
     });
-    const rightLine = new Line({
-      x: (d) => d.x,
-      y: (d) => d.yRight,
-      color: "#5eead4",
-    });
+
+    const leftLine = makeLine("yLeft");
+    const rightLine = makeLine("yRight");
 
     function buildData(a, n) {
-      const eps = n < 0 ? 0.001 : 0;
-      return window.PowerShared.samplePoints(a, n, 1600, window.PowerShared.X_MIN, window.PowerShared.X_MAX)
-        .map((point) => {
-          const visibleY = window.PowerShared.isVisibleY(point.y) ? point.y : Number.NaN;
-          const onLeft = point.x < -eps;
-          const onRight = point.x > eps;
+      const isNegativeExponent = n < 0;
+      const eps = 0.001;
 
-          if (n < 0) {
-            return {
-              x: point.x,
-              yLeft: onLeft ? visibleY : Number.NaN,
-              yRight: onRight ? visibleY : Number.NaN,
-            };
-          }
+      return shared.samplePoints(a, n, 1200, shared.X_MIN, shared.X_MAX)
+        .map((point) => {
+          const visibleY = shared.isVisibleY(point.y) ? point.y : undefined;
+          const isLeft = point.x < -eps;
+          const isRight = point.x > eps;
 
           return {
             x: point.x,
-            yLeft: visibleY,
-            yRight: Number.NaN,
+            yLeft: !isNegativeExponent || isLeft ? visibleY : undefined,
+            yRight: isNegativeExponent && isRight ? visibleY : undefined,
           };
         });
     }
 
     function render() {
-      const { a, n } = window.PowerShared.syncPowerUI(ui);
+      const { a, n } = shared.syncPowerUI(ui);
       const data = buildData(a, n);
+      const width = ui.plotEl.clientWidth;
+      const height = ui.plotEl.clientHeight;
+
+      if (!width || !height) return;
 
       if (!chart) {
         chart = new XYContainer(unovisHost, {
           components: [leftLine, rightLine],
-          xDomain: [window.PowerShared.X_MIN, window.PowerShared.X_MAX],
-          yDomain: [window.PowerShared.Y_MIN, window.PowerShared.Y_MAX],
-          width: ui.plotEl.clientWidth,
-          height: ui.plotEl.clientHeight,
+          xDomain: [shared.X_MIN, shared.X_MAX],
+          yDomain: [shared.Y_MIN, shared.Y_MAX],
+          width,
+          height,
         }, data);
         return;
       }
 
       chart.setData(data);
-      chart.render();
     }
 
-    window.PowerShared.bindPowerUI(ui, render, () => {
-      if (!chart) return;
-      chart.updateContainer({
-        width: ui.plotEl.clientWidth,
-        height: ui.plotEl.clientHeight,
-      });
-      chart.render();
-    });
+    shared.bindPowerUI(ui, render, render);
 
     render();
   </script>
