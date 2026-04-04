@@ -30,7 +30,12 @@
     function render() {
       const { a, n } = PowerShared.getParams(aS, nS, aOut, nOut);
       PowerShared.updatePowerFormula(formula, a, n);
-      plotLine(canvas, (x) => PowerShared.powerY(a, n, x), { minX: -5, maxX: 5, minY: -5, maxY: 5 });
+      plotLine(canvas, (x) => PowerShared.powerY(a, n, x), {
+        minX: PowerShared.X_MIN,
+        maxX: PowerShared.X_MAX,
+        minY: PowerShared.Y_MIN,
+        maxY: PowerShared.Y_MAX,
+      });
     }
 
     aS.addEventListener("input", render);

@@ -1,4 +1,8 @@
 (function () {
+  const X_MIN = -5;
+  const X_MAX = 5;
+  const Y_MIN = -5;
+  const Y_MAX = 5;
   const TICKS = [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5];
 
   function powerY(a, n, x) {
@@ -30,11 +34,33 @@
     return points;
   }
 
+  function isVisibleY(y, minY = Y_MIN, maxY = Y_MAX) {
+    return Number.isFinite(y) && y >= minY && y <= maxY;
+  }
+
+  function toVisibleY(y, minY = Y_MIN, maxY = Y_MAX) {
+    return isVisibleY(y, minY, maxY) ? y : null;
+  }
+
+  function sampleVisiblePoints(a, n, steps, minX = X_MIN, maxX = X_MAX, minY = Y_MIN, maxY = Y_MAX) {
+    return samplePoints(a, n, steps, minX, maxX).map((point) => ({
+      x: point.x,
+      y: toVisibleY(point.y, minY, maxY),
+    }));
+  }
+
   window.PowerShared = {
+    X_MIN,
+    X_MAX,
+    Y_MIN,
+    Y_MAX,
     TICKS,
     powerY,
     getParams,
+    isVisibleY,
+    toVisibleY,
     updatePowerFormula,
     samplePoints,
+    sampleVisiblePoints,
   };
 })();

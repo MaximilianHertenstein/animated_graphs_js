@@ -56,7 +56,7 @@
       }
 
       board = JXG.JSXGraph.initBoard('box', {
-        boundingbox: [-5, 5, 5, -5],
+        boundingbox: [PowerShared.X_MIN, PowerShared.Y_MAX, PowerShared.X_MAX, PowerShared.Y_MIN],
         axis: true,
         grid: true,
         pan: { enabled: false },
@@ -77,8 +77,8 @@
 
       graph = board.create('functiongraph', [
         (x) => PowerShared.powerY(a, n, x),
-        -5,
-        5
+        PowerShared.X_MIN,
+        PowerShared.X_MAX
       ], {
         strokeColor: '#5eead4',
         strokeWidth: 3,

@@ -33,10 +33,10 @@
       const xs = [];
       const ys = [];
       for (let i = 0; i <= 3000; i++) {
-        const x = -5 + (10 * i / 3000);
+        const x = PowerShared.X_MIN + ((PowerShared.X_MAX - PowerShared.X_MIN) * i / 3000);
         const y = PowerShared.powerY(a, n, x);
         xs.push(x);
-        ys.push(Number.isFinite(y) ? y : null);
+        ys.push(PowerShared.toVisibleY(y));
       }
       return [xs, ys];
     }
@@ -46,7 +46,10 @@
         width: plotEl.clientWidth,
         height: plotEl.clientHeight,
         pxAlign: 0,
-        scales: { x: { time: false, auto: false, range: () => [-5, 5] }, y: { auto: false, range: () => [-5, 5] } },
+        scales: {
+          x: { time: false, auto: false, range: () => [PowerShared.X_MIN, PowerShared.X_MAX] },
+          y: { auto: false, range: () => [PowerShared.Y_MIN, PowerShared.Y_MAX] }
+        },
         axes: [
           {
             stroke: "#d7dfeb",

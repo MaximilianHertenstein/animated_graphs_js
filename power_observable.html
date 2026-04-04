@@ -29,10 +29,7 @@
     const el = document.getElementById("plot");
 
     function data(a, n) {
-      return window.PowerShared.samplePoints(a, n, 3000, -5, 5).map((point) => ({
-        x: point.x,
-        y: Number.isFinite(point.y) && point.y >= -5 && point.y <= 5 ? point.y : null,
-      }));
+      return window.PowerShared.sampleVisiblePoints(a, n, 3000);
     }
 
     function render() {
@@ -46,8 +43,8 @@
         marginBottom: 40,
         marginTop: 24,
         marginRight: 24,
-        x: { domain: [-5, 5], ticks: window.PowerShared.TICKS, label: "" },
-        y: { domain: [-5, 5], ticks: window.PowerShared.TICKS, label: "" },
+        x: { domain: [window.PowerShared.X_MIN, window.PowerShared.X_MAX], ticks: window.PowerShared.TICKS, label: "" },
+        y: { domain: [window.PowerShared.Y_MIN, window.PowerShared.Y_MAX], ticks: window.PowerShared.TICKS, label: "" },
         style: { background: "#121826", color: "#d7dfeb" },
         marks: [
           Plot.ruleX(window.PowerShared.TICKS.filter((value) => value !== 0), { stroke: "rgba(255,255,255,0.32)", strokeWidth: 1.2 }),

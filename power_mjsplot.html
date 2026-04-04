@@ -42,7 +42,7 @@
     const el = document.getElementById("plot");
 
     function buildData(a, n) {
-      return window.PowerShared.samplePoints(a, n, 3000, -5, 5);
+      return window.PowerShared.samplePoints(a, n, 3000, window.PowerShared.X_MIN, window.PowerShared.X_MAX);
     }
 
     function render() {
@@ -55,8 +55,8 @@
       const iw = w - m.l - m.r;
       const ih = h - m.t - m.b;
 
-      const x = d3.scaleLinear().domain([-5, 5]).range([0, iw]);
-      const y = d3.scaleLinear().domain([-5, 5]).range([ih, 0]);
+      const x = d3.scaleLinear().domain([window.PowerShared.X_MIN, window.PowerShared.X_MAX]).range([0, iw]);
+      const y = d3.scaleLinear().domain([window.PowerShared.Y_MIN, window.PowerShared.Y_MAX]).range([ih, 0]);
 
       const svg = d3.create("svg")
         .attr("viewBox", `0 0 ${w} ${h}`)
@@ -73,7 +73,7 @@
       });
 
       const line = d3.line()
-        .defined((p) => Number.isFinite(p.y) && p.y >= -5 && p.y <= 5)
+        .defined((p) => window.PowerShared.isVisibleY(p.y))
         .x((p) => x(p.x))
         .y((p) => y(p.y));
 
@@ -93,13 +93,13 @@
         .call(d3.axisLeft(y).tickValues(ticks));
 
       g.append("line")
-        .attr("x1", x(-5)).attr("x2", x(5))
+        .attr("x1", x(window.PowerShared.X_MIN)).attr("x2", x(window.PowerShared.X_MAX))
         .attr("y1", y(0)).attr("y2", y(0))
         .attr("stroke", "#f6f8fb").attr("stroke-width", 2);
 
       g.append("line")
         .attr("x1", x(0)).attr("x2", x(0))
-        .attr("y1", y(-5)).attr("y2", y(5))
+        .attr("y1", y(window.PowerShared.Y_MIN)).attr("y2", y(window.PowerShared.Y_MAX))
         .attr("stroke", "#f6f8fb").attr("stroke-width", 2);
 
       g.selectAll(".tick text")
