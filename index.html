@@ -25,6 +25,7 @@
             <tr>
               <th>Variante</th>
               <th>Bibliothek</th>
+              <th>Release-Datum</th>
               <th>Codezeilen</th>
               <th>Dateigroesse</th>
               <th>Geschwindigkeit</th>
@@ -77,7 +78,7 @@
     const variants = [
       {
         href: "power_plotline.html",      name: "power_plotline",
-        lib: "plotLine.js (SVG)",         lines: 57,  size: "1.6 KB", speed: "schnell",
+        lib: "plotLine.js (SVG)",         lines: 83,  size: "2.4 KB", speed: "schnell",
         deps: "plotLine.js, MathJax, shared-power.js", libSize: "klein",
         s1: 2, s2: 1, s3: 1, sAvg: "1.3",
         relLib: "plotLine.js", relVer: "keine Paket-Registry",
@@ -85,7 +86,7 @@
       },
       {
         href: "power_observable.html",    name: "power_observable",
-        lib: "Observable Plot (+ D3)",    lines: 59,  size: "2.3 KB", speed: "schnell",
+        lib: "Observable Plot (+ D3)",    lines: 55,  size: "2.3 KB", speed: "schnell",
         deps: "Observable Plot (ESM), MathJax, shared-power.js", libSize: "mittel",
         s1: 2, s2: 2, s3: 3, sAvg: "2.3",
         relLib: "Observable Plot", relVer: "npm Erstveroeffentlichung",
@@ -93,7 +94,7 @@
       },
       {
         href: "power_echarts.html",       name: "power_echarts",
-        lib: "ECharts",                   lines: 62,  size: "2.3 KB", speed: "schnell bis mittel",
+        lib: "ECharts",                   lines: 56,  size: "2.2 KB", speed: "schnell bis mittel",
         deps: "ECharts, MathJax, shared-power.js", libSize: "gross",
         s1: 3, s2: 2, s3: 3, sAvg: "2.7",
         relLib: "ECharts", relVer: "npm Erstveroeffentlichung",
@@ -109,7 +110,7 @@
       },
       {
         href: "plotly_test.html",         name: "power_plotly",
-        lib: "Plotly",                    lines: 85,  size: "2.9 KB", speed: "eher langsamer Start",
+        lib: "Plotly",                    lines: 82,  size: "2.8 KB", speed: "eher langsamer Start",
         deps: "Plotly, MathJax, shared-power.js", libSize: "sehr gross",
         s1: 4, s2: 3, s3: 3, sAvg: "3.3",
         relLib: "Plotly", relVer: "npm Erstveroeffentlichung",
@@ -117,7 +118,7 @@
       },
       {
         href: "power_uplot.html",         name: "power_uplot",
-        lib: "uPlot",                     lines: 88,  size: "3.1 KB", speed: "sehr schnell",
+        lib: "uPlot",                     lines: 82,  size: "2.9 KB", speed: "sehr schnell",
         deps: "uPlot, MathJax, shared-power.js", libSize: "klein (uPlot leichtgewichtig)",
         s1: 2, s2: 1, s3: 2, sAvg: "1.7",
         relLib: "uPlot", relVer: "npm Erstveroeffentlichung",
@@ -157,7 +158,7 @@
       },
       {
         href: "power_functionplot.html",  name: "power_functionplot",
-        lib: "function-plot",             lines: 110, size: "3.0 KB", speed: "schnell",
+        lib: "function-plot",             lines: 100, size: "2.7 KB", speed: "schnell",
         deps: "function-plot, MathJax, shared-power.js", libSize: "mittel",
         s1: 2, s2: 1, s3: 2, sAvg: "1.7",
         relLib: "function-plot", relVer: "npm Erstveroeffentlichung",
@@ -176,8 +177,9 @@
       .map(v => `<li><a href="${v.href}">${v.name}</a></li>`)
       .join("");
 
-    overview.innerHTML = variants
-      .map(v => `<tr><td><a href="${v.href}">${v.name}</a></td><td>${v.lib}</td><td>${v.lines}</td><td>${v.size}</td><td>${v.speed}</td><td>${v.deps}</td><td>${v.libSize}</td></tr>`)
+    overview.innerHTML = [...variants]
+      .sort((a, b) => a.lines - b.lines)
+      .map(v => `<tr><td><a href="${v.href}">${v.name}</a></td><td>${v.lib}</td><td>${v.relDate}</td><td>${v.lines}</td><td>${v.size}</td><td>${v.speed}</td><td>${v.deps}</td><td>${v.libSize}</td></tr>`)
       .join("");
 
     score.innerHTML = variants
