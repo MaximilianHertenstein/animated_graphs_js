@@ -44,21 +44,9 @@
     const EPS = 0.001;
     let chart;
 
-    const xAxisAtZero = new Plotline({
-      axis: "x",
-      value: 0,
-      color: "#f6f8fb",
-      labelText: "",
-      labelOrientation: "horizontal",
-    });
-
-    const yAxisAtZero = new Plotline({
-      axis: "y",
-      value: 0,
-      color: "#f6f8fb",
-      labelText: "",
-      labelOrientation: "horizontal",
-    });
+    const makeAxisAtZero = (axis) => new Plotline({ axis, value: 0, color: "#f6f8fb" });
+    const xAxisAtZero = makeAxisAtZero("x");
+    const yAxisAtZero = makeAxisAtZero("y");
 
     const leftLine = new Line({ x: (d) => d.x, y: (d) => d.yLeft, color: "#5eead4" });
     const rightLine = new Line({ x: (d) => d.x, y: (d) => d.yRight, color: "#5eead4" });
