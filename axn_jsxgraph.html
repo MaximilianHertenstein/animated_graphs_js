@@ -3,238 +3,59 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ax^n Explorer (JSXGraph)</title>
+  <title>ax^n (JSXGraph)</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css">
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
   <style>
     * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      height: 100vh;
-      background: #0f1117;
-      color: #e7ecf3;
-      font-family: "Segoe UI", system-ui, sans-serif;
-      overflow: hidden;
-    }
-    .card {
-      width: 100vw;
-      min-height: 100vh;
-      background: #171b24;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 0;
-      padding: 20px;
-    }
-    h1 {
-      margin: 0 0 8px;
-      font-size: 1.2rem;
-      font-weight: 600;
-    }
-    .formula {
-      margin: 0 0 14px;
-      color: #aab5c5;
-      font-family: "Cascadia Code", "Consolas", monospace;
-    }
-    .controls {
-      display: grid;
-      gap: 10px;
-      margin-bottom: 14px;
-    }
-    .row {
-      display: grid;
-      grid-template-columns: 26px 1fr 56px;
-      align-items: center;
-      gap: 10px;
-    }
-    .row label {
-      color: #aab5c5;
-      font-family: "Cascadia Code", "Consolas", monospace;
-    }
-    .row output {
-      text-align: right;
-      color: #e7ecf3;
-      font-family: "Cascadia Code", "Consolas", monospace;
-    }
-    #box {
-      width: 100%;
-      height: calc(100vh - 210px);
-      min-height: 360px;
-      border-radius: 10px;
-      overflow: hidden;
-      background: #111722;
-    }
-    .jxgbox {
-      position: relative;
-      overflow: hidden;
-      touch-action: none;
-    }
-    .jxgbox svg,
-    .jxgbox canvas {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-    }
+    body { margin: 0; background: #0f1117; color: #e7ecf3; font-family: system-ui, sans-serif; }
+    .app { width: 100vw; height: 100vh; display: grid; grid-template-rows: auto 1fr; gap: 10px; padding: 12px; }
+    .controls { display: grid; gap: 8px; }
+    .row { display: grid; grid-template-columns: 24px 1fr 50px; gap: 8px; align-items: center; }
+    #box { width: 100%; height: 100%; background: #121826; border: 1px solid #2a3347; }
   </style>
 </head>
 <body>
-  <main class="card">
-    <h1>ax^n Explorer (JSXGraph)</h1>
-    <p class="formula" id="formula">\(f(x)=1.0\cdot x^{2.0}\)</p>
-
+  <main class="app">
     <section class="controls">
-      <div class="row">
-        <label for="a">a</label>
-        <input id="a" type="range" min="-5" max="5" step="0.1" value="1">
-        <output id="aOut">1.0</output>
-      </div>
-      <div class="row">
-        <label for="n">n</label>
-        <input id="n" type="range" min="-4" max="8" step="1" value="2">
-        <output id="nOut">2</output>
-      </div>
+      <div class="row"><label for="a">a</label><input id="a" type="range" min="-5" max="5" step="0.1" value="1"><output id="aOut">1.0</output></div>
+      <div class="row"><label for="n">n</label><input id="n" type="range" min="-4" max="8" step="1" value="2"><output id="nOut">2</output></div>
     </section>
-
     <div id="box" class="jxgbox"></div>
   </main>
 
-  <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
   <script>
-    function loadFallbackAndInit(initFn, box) {
-      const s = document.createElement('script');
-      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jsxgraph/1.8.0/jsxgraphcore.js';
-      s.onload = function () {
-        initFn();
-      };
-      s.onerror = function () {
-        box.textContent = 'JSXGraph konnte nicht geladen werden.';
-      };
-      document.head.appendChild(s);
+    const aS = document.getElementById('a');
+    const nS = document.getElementById('n');
+    const aOut = document.getElementById('aOut');
+    const nOut = document.getElementById('nOut');
+    let a = 1, n = 2;
+
+    const board = JXG.JSXGraph.initBoard('box', {
+      boundingbox: [-5, 5, 5, -5], axis: true, grid: true,
+      pan: { enabled: false }, zoom: { enabled: false }, showNavigation: false, showCopyright: false
+    });
+
+    board.defaultAxes.x.setAttribute({ strokeColor: '#f6f8fb', ticks: { strokeColor: '#d7dfeb', drawLabels: true, ticksDistance: 1 } });
+    board.defaultAxes.y.setAttribute({ strokeColor: '#f6f8fb', ticks: { strokeColor: '#d7dfeb', drawLabels: true, ticksDistance: 1 } });
+    board.setAttribute({ grid: { strokeColor: 'rgba(255,255,255,0.15)' } });
+
+    board.create('functiongraph', [
+      (x) => a * Math.pow(Math.abs(x), n) * (x < 0 && n % 2 !== 0 ? -1 : 1),
+      -5,
+      5
+    ], { strokeColor: '#5eead4', strokeWidth: 3, highlight: false });
+
+    function render() {
+      a = parseFloat(aS.value); n = parseInt(nS.value, 10);
+      aOut.textContent = a.toFixed(1); nOut.textContent = String(n);
+      board.update();
     }
 
-    function boot() {
-      const aSlider = document.getElementById('a');
-      const nSlider = document.getElementById('n');
-      const aOut = document.getElementById('aOut');
-      const nOut = document.getElementById('nOut');
-      const formula = document.getElementById('formula');
-      const box = document.getElementById('box');
-
-      let a = parseFloat(aSlider.value);
-      let n = parseInt(nSlider.value, 10);
-      let board = null;
-      let graph = null;
-
-      function updateLabels() {
-        aOut.textContent = a.toFixed(1);
-        nOut.textContent = n;
-        formula.innerHTML = `\\(f(x)=${a.toFixed(1)}\\cdot x^{${n}}\\)`;
-        if (window.MathJax && MathJax.typesetPromise) {
-          MathJax.typesetPromise([formula]).catch(() => {});
-        }
-      }
-
-      function fn(x) {
-        return a * Math.pow(Math.abs(x), n) * (x < 0 && n % 2 !== 0 ? -1 : 1);
-      }
-
-      function redraw() {
-        if (graph && typeof graph.Y === 'function') {
-          graph.Y = fn;
-        }
-        if (board) {
-          board.update();
-        }
-      }
-
-      function render() {
-        a = parseFloat(aSlider.value);
-        n = parseInt(nSlider.value, 10);
-        updateLabels();
-        redraw();
-      }
-
-      aSlider.addEventListener('input', render);
-      nSlider.addEventListener('input', render);
-      updateLabels();
-
-      function initBoard() {
-        if (typeof JXG === 'undefined') {
-          box.textContent = 'JSXGraph konnte nicht geladen werden.';
-          return;
-        }
-
-        try {
-          if (JXG.JSXGraph && typeof JXG.JSXGraph.freeBoard === 'function') {
-            try { JXG.JSXGraph.freeBoard(board); } catch (e) {}
-          }
-
-        board = JXG.JSXGraph.initBoard('box', {
-          boundingbox: [-5, 5, 5, -5],
-          axis: true,
-          grid: true,
-          showNavigation: false,
-          showCopyright: false,
-          pan: { enabled: false },
-          zoom: { enabled: false }
-        });
-
-        if (board.defaultAxes && board.defaultAxes.x && board.defaultAxes.y) {
-          board.defaultAxes.x.setAttribute({
-            strokeColor: '#f6f8fb',
-            strokeWidth: 1.8,
-            ticks: {
-              strokeColor: '#d7dfeb',
-              drawLabels: true,
-              majorHeight: 8,
-              minorTicks: 0,
-              ticksDistance: 1,
-              label: { strokeColor: '#d7dfeb', offset: [0, -14] }
-            }
-          });
-          board.defaultAxes.y.setAttribute({
-            strokeColor: '#f6f8fb',
-            strokeWidth: 1.8,
-            ticks: {
-              strokeColor: '#d7dfeb',
-              drawLabels: true,
-              majorHeight: 8,
-              minorTicks: 0,
-              ticksDistance: 1,
-              label: { strokeColor: '#d7dfeb', offset: [-10, 0] }
-            }
-          });
-        }
-
-        graph = board.create('functiongraph', [
-          fn,
-          -5,
-          5
-        ], {
-          strokeColor: '#67d6ff',
-          strokeWidth: 3,
-          highlight: false
-        });
-
-        window.addEventListener('resize', () => board.resizeContainer(box.clientWidth, box.clientHeight, true));
-          board.update();
-        } catch (err) {
-          box.textContent = 'Fehler beim Initialisieren von JSXGraph.';
-          console.error(err);
-        }
-      }
-
-      if (typeof JXG === 'undefined') {
-        loadFallbackAndInit(initBoard, box);
-      } else {
-        initBoard();
-      }
-    }
-
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', () => setTimeout(boot, 0));
-    } else {
-      setTimeout(boot, 0);
-    }
+    aS.addEventListener('input', render);
+    nS.addEventListener('input', render);
+    window.addEventListener('resize', () => board.resizeContainer(document.getElementById('box').clientWidth, document.getElementById('box').clientHeight, true));
+    render();
   </script>
 </body>
 </html>

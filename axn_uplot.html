@@ -1,296 +1,89 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="de">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ax^n Explorer (uPlot)</title>
+  <title>ax^n (uPlot)</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uplot@1.6.24/dist/uPlot.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: system-ui, sans-serif;
-      background: #0f0f11;
-      color: #e8e6e1;
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    .card {
-      background: #18181c;
-      border: 0.5px solid rgba(255,255,255,0.1);
-      border-radius: 0;
-      padding: 1.25rem 1.5rem;
-      width: 100vw;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .expr {
-      font-family: 'Courier New', monospace;
-      font-size: 22px;
-      font-weight: 500;
-      margin-bottom: 2rem;
-      color: #e8e6e1;
-    }
-    .expr .muted { color: rgba(255,255,255,0.35); font-weight: 400; }
-
-    #controls {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 2rem;
-    }
-
-    .row {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .row label {
-      font-family: 'Courier New', monospace;
-      font-size: 13px;
-      color: rgba(255,255,255,0.45);
-      width: 52px;
-    }
-
-    .row input[type="range"] {
-      flex: 1;
-      -webkit-appearance: none;
-      height: 3px;
-      background: rgba(255,255,255,0.12);
-      border-radius: 2px;
-      outline: none;
-      cursor: pointer;
-    }
-    .row input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      background: #7F77DD;
-      cursor: pointer;
-      transition: background 0.15s;
-    }
-    .row input[type="range"]::-webkit-slider-thumb:hover { background: #AFA9EC; }
-    .row input[type="range"]::-moz-range-thumb {
-      width: 16px;
-      height: 16px;
-      border: none;
-      border-radius: 50%;
-      background: #7F77DD;
-      cursor: pointer;
-    }
-
-    .row .val {
-      font-family: 'Courier New', monospace;
-      font-size: 13px;
-      font-weight: 500;
-      min-width: 44px;
-      text-align: right;
-      color: #e8e6e1;
-    }
-
-    #plot { width: 100%; min-height: 0; height: calc(100vh - 180px); }
-    #plot .uplot { width: 100% !important; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #0f1117; color: #e7ecf3; font-family: system-ui, sans-serif; }
+    .app { width: 100vw; height: 100vh; display: grid; grid-template-rows: auto 1fr; gap: 10px; padding: 12px; }
+    .controls { display: grid; gap: 8px; }
+    .row { display: grid; grid-template-columns: 24px 1fr 50px; gap: 8px; align-items: center; }
+    #plot { width: 100%; height: 100%; min-height: 0; background: #121826; border: 1px solid #2a3347; }
   </style>
 </head>
 <body>
+  <main class="app">
+    <section class="controls">
+      <div class="row"><label for="a">a</label><input id="a" type="range" min="-5" max="5" step="0.1" value="1"><output id="aOut">1.0</output></div>
+      <div class="row"><label for="n">n</label><input id="n" type="range" min="-4" max="8" step="1" value="2"><output id="nOut">2</output></div>
+    </section>
+    <div id="plot"></div>
+  </main>
 
-<div class="card">
-  <div class="expr" id="formula">\(f(x)=1.0\cdot x^{2.0}\)</div>
+  <script src="https://cdn.jsdelivr.net/npm/uplot@1.6.24/dist/uPlot.iife.min.js"></script>
+  <script>
+    const aS = document.getElementById('a');
+    const nS = document.getElementById('n');
+    const aOut = document.getElementById('aOut');
+    const nOut = document.getElementById('nOut');
+    const plotEl = document.getElementById('plot');
+    let u;
 
-  <div id="controls">
-    <div class="row">
-      <label>a</label>
-      <input type="range" id="a" min="-5" max="5" step="0.1" value="1">
-      <span class="val" id="a-out">1.0</span>
-    </div>
-    <div class="row">
-      <label>n</label>
-      <input type="range" id="n" min="-4" max="8" step="1" value="2">
-      <span class="val" id="n-out">2</span>
-    </div>
-  </div>
-
-  <div id="plot"></div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/uplot@1.6.24/dist/uPlot.iife.min.js"></script>
-<script>
-  // Fallback for networks where jsDelivr is blocked.
-  if (typeof uPlot === 'undefined') {
-    const s = document.createElement('script');
-    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/uPlot/1.6.24/uPlot.iife.min.js';
-    document.head.appendChild(s);
-  }
-</script>
-<script>
-  let uplot, a = 1, n = 2;
-
-  function genData() {
-    const pts = 7000;
-    const xs = [], ys = [];
-    for (let i = 0; i <= pts; i++) {
-      const x = -5 + (10 * i / pts);
-      // handle negative x with non-integer n: use sign-preserving power
-      const y = a * Math.pow(Math.abs(x), n) * (x < 0 && n % 2 !== 0 ? -1 : 1);
-      xs.push(x);
-      ys.push(isFinite(y) ? y : null);
-    }
-    return [xs, ys];
-  }
-
-  function getPlotHeight() {
-    const h = document.getElementById('plot').clientHeight;
-    return Math.max(380, h || 460);
-  }
-
-  function makeOpts(w) {
-    const grid  = 'rgba(255,255,255,0.14)';
-    const axis  = 'rgba(255,255,255,0.55)';
-    const axisLabel = 'rgba(255,255,255,0.8)';
-    const zeroAxis = 'rgba(255,255,255,0.95)';
-    const fixedSplits = (u, axisIdx, scaleMin, scaleMax) => {
-      const vals = [];
-      for (let i = -5; i <= 5; i++) {
-        if (i >= scaleMin && i <= scaleMax) vals.push(i);
-      }
-      return vals;
+    const ticks = (u, i, min, max) => {
+      const t = [];
+      for (let v = -5; v <= 5; v++) if (v >= min && v <= max) t.push(v);
+      return t;
     };
-    return {
-      width: w,
-      height: getPlotHeight(),
-      pxAlign: 0,
-      padding: [12, 12, 0, 0],
-      cursor: { show: true, drag: { x: false, y: false } },
-      legend: { show: false },
-      hooks: {
-        draw: [
-          (u) => {
-            const ctx = u.ctx;
-            const x0 = u.valToPos(0, 'x', true);
-            const y0 = u.valToPos(0, 'y', true);
 
-            ctx.save();
-            ctx.strokeStyle = zeroAxis;
-            ctx.lineWidth = 1.4;
-
-            // x-axis (y = 0)
-            ctx.beginPath();
-            ctx.moveTo(u.bbox.left, y0);
-            ctx.lineTo(u.bbox.left + u.bbox.width, y0);
-            ctx.stroke();
-
-            // y-axis (x = 0)
-            ctx.beginPath();
-            ctx.moveTo(x0, u.bbox.top);
-            ctx.lineTo(x0, u.bbox.top + u.bbox.height);
-            ctx.stroke();
-
-            ctx.restore();
-          }
-        ]
-      },
-      axes: [
-        {
-          stroke: axisLabel,
-          grid:  { stroke: grid, width: 0.5 },
-          ticks: { show: true, stroke: axis, size: 6, width: 1 },
-          splits: fixedSplits,
-          values: (u, splits) => splits.map((v) => String(v)),
-          font:  '13px monospace',
-          space: 36,
-          gap: 8,
-          labelGap: 10,
-          labelSize: 24,
-        },
-        {
-          stroke: axisLabel,
-          grid:  { stroke: grid, width: 0.5 },
-          ticks: { show: true, stroke: axis, size: 6, width: 1 },
-          splits: fixedSplits,
-          values: (u, splits) => splits.map((v) => String(v)),
-          font:  '13px monospace',
-          size: 56,
-          space: 36,
-          gap: 8,
-          labelGap: 10,
-          labelSize: 40,
-        }
-      ],
-      series: [
-        {},
-        {
-          stroke: '#7F77DD',
-          width: 3,
-          fill: 'transparent',
-          spanGaps: false,
-        }
-      ],
-      scales: {
-        x: { auto: false, range: () => [-5, 5] },
-        y: { auto: false, range: () => [-5, 5] },
+    function data(a, n) {
+      const xs = [], ys = [];
+      for (let i = 0; i <= 3000; i++) {
+        const x = -5 + (10 * i / 3000);
+        const y = a * Math.pow(Math.abs(x), n) * (x < 0 && n % 2 !== 0 ? -1 : 1);
+        xs.push(x); ys.push(Number.isFinite(y) ? y : null);
       }
-    };
-  }
-
-  function initPlot() {
-    const el = document.getElementById('plot');
-    const w  = el.offsetWidth || 900;
-    const [xs, ys] = genData();
-    if (uplot) uplot.destroy();
-    uplot = new uPlot(makeOpts(w), [xs, ys], el);
-  }
-
-  function updatePlot() {
-    if (!uplot) return;
-    uplot.setData(genData());
-  }
-
-  function updateExpr() {
-    const formula = document.getElementById('formula');
-    formula.innerHTML = `\\(f(x)=${a.toFixed(1)}\\cdot x^{${n}}\\)`;
-    if (window.MathJax && MathJax.typesetPromise) {
-      MathJax.typesetPromise([formula]).catch(() => {});
+      return [xs, ys];
     }
-  }
 
-  document.getElementById('a').addEventListener('input', e => {
-    a = parseFloat(e.target.value);
-    document.getElementById('a-out').textContent = a.toFixed(1);
-    updateExpr(); updatePlot();
-  });
-
-  document.getElementById('n').addEventListener('input', e => {
-    n = parseInt(e.target.value, 10);
-    document.getElementById('n-out').textContent = n;
-    updateExpr(); updatePlot();
-  });
-
-  function start() {
-    if (typeof uPlot !== 'function') {
-      document.getElementById('plot').textContent = 'Graph library failed to load.';
-      return;
+    function opts() {
+      return {
+        width: plotEl.clientWidth,
+        height: plotEl.clientHeight,
+        pxAlign: 0,
+        scales: { x: { auto: false, range: () => [-5, 5] }, y: { auto: false, range: () => [-5, 5] } },
+        axes: [
+          { stroke: '#d7dfeb', grid: { stroke: 'rgba(255,255,255,0.15)' }, ticks: { show: true }, splits: ticks, values: (u,s)=>s },
+          { stroke: '#d7dfeb', grid: { stroke: 'rgba(255,255,255,0.15)' }, ticks: { show: true }, splits: ticks, values: (u,s)=>s }
+        ],
+        hooks: { draw: [(u) => {
+          const ctx = u.ctx, x0 = u.valToPos(0,'x',true), y0 = u.valToPos(0,'y',true);
+          ctx.save(); ctx.strokeStyle = '#f6f8fb'; ctx.lineWidth = 1.5;
+          ctx.beginPath(); ctx.moveTo(u.bbox.left, y0); ctx.lineTo(u.bbox.left + u.bbox.width, y0); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(x0, u.bbox.top); ctx.lineTo(x0, u.bbox.top + u.bbox.height); ctx.stroke();
+          ctx.restore();
+        }]},
+        series: [{}, { stroke: '#5eead4', width: 3 }],
+      };
     }
-    initPlot();
-  }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', start);
-  } else {
-    start();
-  }
+    function render() {
+      const a = parseFloat(aS.value), n = parseInt(nS.value, 10);
+      aOut.textContent = a.toFixed(1); nOut.textContent = String(n);
+      if (!u) u = new uPlot(opts(), data(a, n), plotEl);
+      else u.setData(data(a, n));
+    }
 
-  updateExpr();
-
-  window.addEventListener('resize', () => {
-    if (uplot) uplot.setSize({ width: document.getElementById('plot').offsetWidth, height: getPlotHeight() });
-  });
-</script>
-
+    aS.addEventListener('input', render);
+    nS.addEventListener('input', render);
+    window.addEventListener('resize', () => {
+      if (!u) return;
+      u.setSize({ width: plotEl.clientWidth, height: plotEl.clientHeight });
+      render();
+    });
+    render();
+  </script>
 </body>
 </html>
