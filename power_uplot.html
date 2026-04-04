@@ -37,6 +37,13 @@
     }
 
     function opts() {
+      const ax = {
+        stroke: "#d7dfeb",
+        grid: { stroke: "rgba(255,255,255,0.15)", width: 1 },
+        ticks: { show: true, size: 5, stroke: "#d7dfeb", width: 1 },
+        splits: PowerShared.TICKS,
+        values: (u, s) => s.map(v => v.toString()),
+      };
       return {
         width: ui.plotEl.clientWidth,
         height: ui.plotEl.clientHeight,
@@ -45,48 +52,20 @@
           x: { time: false, auto: false, range: () => [PowerShared.X_MIN, PowerShared.X_MAX] },
           y: { auto: false, range: () => [PowerShared.Y_MIN, PowerShared.Y_MAX] }
         },
-        axes: [
-          {
-            stroke: "#d7dfeb",
-            grid: { stroke: "rgba(255,255,255,0.15)", width: 1 },
-            ticks: { show: true, size: 5, stroke: "#d7dfeb", width: 1 },
-            splits: window.PowerShared.TICKS,
-            label: "",
-            values: (u, splits) => splits.map(v => v.toString())
-          },
-          {
-            stroke: "#d7dfeb",
-            grid: { stroke: "rgba(255,255,255,0.15)", width: 1 },
-            ticks: { show: true, size: 5, stroke: "#d7dfeb", width: 1 },
-            splits: window.PowerShared.TICKS,
-            values: (u, splits) => splits.map(v => v.toString()),
-            side: -1
-          }
-        ],
+        axes: [{ ...ax, label: "" }, { ...ax, side: -1 }],
         hooks: {
-          draw: [
-            (u) => {
-              const ctx = u.ctx;
-              const x0 = u.valToPos(0, "x", true);
-              const y0 = u.valToPos(0, "y", true);
-
-              ctx.save();
-              ctx.strokeStyle = "#f6f8fb";
-              ctx.lineWidth = 2;
-
-              ctx.beginPath();
-              ctx.moveTo(u.bbox.left, y0);
-              ctx.lineTo(u.bbox.left + u.bbox.width, y0);
-              ctx.stroke();
-
-              ctx.beginPath();
-              ctx.moveTo(x0, u.bbox.top);
-              ctx.lineTo(x0, u.bbox.top + u.bbox.height);
-              ctx.stroke();
-
-              ctx.restore();
-            }
-          ]
+          draw: [(u) => {
+            const ctx = u.ctx;
+            const x0 = u.valToPos(0, "x", true);
+            const y0 = u.valToPos(0, "y", true);
+            const ln = (x1, y1, x2, y2) => { ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); };
+            ctx.save();
+            ctx.strokeStyle = "#f6f8fb";
+            ctx.lineWidth = 2;
+            ln(u.bbox.left, y0, u.bbox.left + u.bbox.width, y0);
+            ln(x0, u.bbox.top, x0, u.bbox.top + u.bbox.height);
+            ctx.restore();
+          }]
         },
         series: [{}, { stroke: "#5eead4", width: 3 }]
       };
