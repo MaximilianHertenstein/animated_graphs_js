@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="de">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,91 +11,62 @@
   <script src="shared-power.js"></script>
   <style>
     .jxgbox {
-      position: relative;
-      overflow: hidden;
-      touch-action: none;
-      background: #121826;
-    }
-
-    .jxgbox svg,
-    .jxgbox canvas {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
       background: #121826;
     }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
 </head>
+
 <body>
   <main class="app">
     <section class="controls">
-      <div class="row"><label for="a">a</label><input id="a" type="range" min="-5" max="5" step="0.1" value="1"><output id="aOut">1.0</output></div>
-      <div class="row"><label for="n">n</label><input id="n" type="range" min="-4" max="8" step="1" value="2"><output id="nOut">2</output></div>
+      <div class="row"><label for="a">a</label><input id="a" type="range" min="-5" max="5" step="0.1" value="1"><output
+          id="aOut">1.0</output></div>
+      <div class="row"><label for="n">n</label><input id="n" type="range" min="-4" max="8" step="1" value="2"><output
+          id="nOut">2</output></div>
     </section>
     <div id="formula" class="formula">\(f(x)=1.0\cdot x^{2}\)</div>
     <div id="box" class="plot-surface jxgbox"></div>
   </main>
-
   <script>
     const ui = PowerShared.getPowerUI('box');
     let a = 1;
     let n = 2;
     let board;
     let graph;
-
     function boot() {
       if (typeof JXG === 'undefined') {
         ui.plotEl.textContent = 'JSXGraph konnte nicht geladen werden.';
         return;
       }
-
       board = JXG.JSXGraph.initBoard('box', {
         boundingbox: [PowerShared.X_MIN, PowerShared.Y_MAX, PowerShared.X_MAX, PowerShared.Y_MIN],
         axis: true,
         grid: true,
-        pan: { enabled: false },
-        zoom: { enabled: false },
-        showNavigation: false,
-        showCopyright: false,
-        keepAspectRatio: false,
-        backgroundColor: '#121826'
+
       });
-
-      ui.plotEl.style.backgroundColor = '#121826';
-      if (board.containerObj) board.containerObj.style.backgroundColor = '#121826';
-
       if (board.defaultAxes?.x) board.defaultAxes.x.setAttribute({ strokeColor: '#f6f8fb', strokeWidth: 1.5 });
       if (board.defaultAxes?.y) board.defaultAxes.y.setAttribute({ strokeColor: '#f6f8fb', strokeWidth: 1.5 });
-      if (board.gridX) board.gridX.setAttribute({ strokeColor: 'rgba(255,255,255,0.15)', strokeWidth: 0.5 });
-      if (board.gridY) board.gridY.setAttribute({ strokeColor: 'rgba(255,255,255,0.15)', strokeWidth: 0.5 });
-
       graph = board.create('functiongraph', [
         // Read current parameters on every evaluation; no data array needed.
         (x) => PowerShared.powerY(a, n, x),
         PowerShared.X_MIN,
         PowerShared.X_MAX
       ], {
-        strokeColor: '#5eead4',
-        strokeWidth: 3,
-        highlight: false,
+        strokeWidth: 3
       });
-
       board.resizeContainer(ui.plotEl.clientWidth, ui.plotEl.clientHeight, true);
       render();
     }
-
     function render() {
       ({ a, n } = PowerShared.syncPowerUI(ui));
       if (board) board.update();
     }
-
     PowerShared.bindPowerUI(ui, render, () => {
       if (board) board.resizeContainer(ui.plotEl.clientWidth, ui.plotEl.clientHeight, true);
     });
-
     boot();
   </script>
 </body>
+
 </html>
