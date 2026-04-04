@@ -26,6 +26,147 @@
         <li><a href="ExponentialfunktionTransformationen.html">exponential_transformationen</a></li>
       </ul>
     </article>
+
+    <article>
+      <h2>Varianten-Uebersicht</h2>
+      <p>Messwerte: Codezeilen und Dateigroesse der lokalen HTML-Datei. Geschwindigkeit ist eine praxisnahe Einschaetzung (bei kaltem Cache oft langsamer, bei warmem Cache deutlich schneller).</p>
+      <figure>
+        <table>
+          <thead>
+            <tr>
+              <th>Variante</th>
+              <th>Bibliothek</th>
+              <th>Codezeilen</th>
+              <th>Dateigroesse</th>
+              <th>Geschwindigkeit</th>
+              <th>Abhaengigkeiten</th>
+              <th>Bibliotheksgroesse (grob)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="power_plotline.html">power_plotline</a></td>
+              <td>plotLine.js (lokal), Canvas</td>
+              <td>42</td>
+              <td>1.6 KB</td>
+              <td>sehr schnell</td>
+              <td>MathJax, shared-power.js, plotLine.js</td>
+              <td>klein (eigene lokale Plot-Lib)</td>
+            </tr>
+            <tr>
+              <td><a href="power-function-explorer.html">power_canvas</a></td>
+              <td>Canvas (ohne externe Plot-Lib)</td>
+              <td>108</td>
+              <td>3.1 KB</td>
+              <td>sehr schnell</td>
+              <td>MathJax, shared-power.js</td>
+              <td>sehr klein (keine externe Plot-Lib)</td>
+            </tr>
+            <tr>
+              <td><a href="power_uplot.html">power_uplot</a></td>
+              <td>uPlot</td>
+              <td>96</td>
+              <td>3.4 KB</td>
+              <td>sehr schnell</td>
+              <td>uPlot, MathJax, shared-power.js</td>
+              <td>klein (uPlot leichtgewichtig)</td>
+            </tr>
+            <tr>
+              <td><a href="test.html">power_chartjs</a></td>
+              <td>Chart.js</td>
+              <td>86</td>
+              <td>2.9 KB</td>
+              <td>schnell</td>
+              <td>Chart.js, MathJax, shared-power.js</td>
+              <td>mittel</td>
+            </tr>
+            <tr>
+              <td><a href="power_echarts.html">power_echarts</a></td>
+              <td>ECharts</td>
+              <td>69</td>
+              <td>2.6 KB</td>
+              <td>schnell bis mittel</td>
+              <td>ECharts, MathJax, shared-power.js</td>
+              <td>gross</td>
+            </tr>
+            <tr>
+              <td><a href="power_observable.html">power_observable</a></td>
+              <td>Observable Plot (+ D3 intern)</td>
+              <td>67</td>
+              <td>2.5 KB</td>
+              <td>schnell</td>
+              <td>Observable Plot (ESM), MathJax, shared-power.js</td>
+              <td>mittel</td>
+            </tr>
+            <tr>
+              <td><a href="power_mjsplot.html">power_mjsplot</a></td>
+              <td>D3 (ESM)</td>
+              <td>129</td>
+              <td>3.9 KB</td>
+              <td>mittel</td>
+              <td>D3 (ESM), MathJax, shared-power.js</td>
+              <td>mittel bis gross</td>
+            </tr>
+            <tr>
+              <td><a href="power_jsxgraph.html">power_jsxgraph</a></td>
+              <td>JSXGraph</td>
+              <td>132</td>
+              <td>3.9 KB</td>
+              <td>mittel</td>
+              <td>JSXGraph, MathJax, shared-power.js</td>
+              <td>gross</td>
+            </tr>
+            <tr>
+              <td><a href="plotly_test.html">power_plotly</a></td>
+              <td>Plotly</td>
+              <td>94</td>
+              <td>3.2 KB</td>
+              <td>eher langsamer Start</td>
+              <td>Plotly, MathJax, shared-power.js</td>
+              <td>sehr gross</td>
+            </tr>
+            <tr>
+              <td><a href="ExponentialfunktionTransformationen.html">exponential_transformationen</a></td>
+              <td>SVG (ohne externe Plot-Lib)</td>
+              <td>77</td>
+              <td>3.1 KB</td>
+              <td>schnell</td>
+              <td>MathJax</td>
+              <td>sehr klein (kein externes Plot-Framework)</td>
+            </tr>
+          </tbody>
+        </table>
+      </figure>
+      <p><small>Hinweis: Die wahrgenommene Geschwindigkeit haengt stark von Netzwerk, Browser und Cache ab. Die eigentliche Rechenlast fuer die Funktion ist bei allen Varianten klein.</small></p>
+
+      <h3>Score-Uebersicht (1-5)</h3>
+      <p><small>Skala: 1 = sehr gut/gering, 5 = eher schlecht/hoch. Startzeit bewertet initiales Laden, Laufzeit bewertet Interaktion/Rendering, Komplexitaet bewertet Wartungsaufwand.</small></p>
+      <figure>
+        <table>
+          <thead>
+            <tr>
+              <th>Variante</th>
+              <th>Startzeit</th>
+              <th>Laufzeit</th>
+              <th>Komplexitaet</th>
+              <th>Gesamt (Mittel)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><a href="power_plotline.html">power_plotline</a></td><td>1</td><td>1</td><td>1</td><td>1.0</td></tr>
+            <tr><td><a href="power-function-explorer.html">power_canvas</a></td><td>1</td><td>1</td><td>2</td><td>1.3</td></tr>
+            <tr><td><a href="power_uplot.html">power_uplot</a></td><td>2</td><td>1</td><td>2</td><td>1.7</td></tr>
+            <tr><td><a href="test.html">power_chartjs</a></td><td>2</td><td>2</td><td>2</td><td>2.0</td></tr>
+            <tr><td><a href="power_observable.html">power_observable</a></td><td>2</td><td>2</td><td>3</td><td>2.3</td></tr>
+            <tr><td><a href="ExponentialfunktionTransformationen.html">exponential_transformationen</a></td><td>1</td><td>2</td><td>3</td><td>2.0</td></tr>
+            <tr><td><a href="power_echarts.html">power_echarts</a></td><td>3</td><td>2</td><td>3</td><td>2.7</td></tr>
+            <tr><td><a href="power_mjsplot.html">power_mjsplot</a></td><td>3</td><td>2</td><td>4</td><td>3.0</td></tr>
+            <tr><td><a href="power_jsxgraph.html">power_jsxgraph</a></td><td>3</td><td>3</td><td>4</td><td>3.3</td></tr>
+            <tr><td><a href="plotly_test.html">power_plotly</a></td><td>4</td><td>3</td><td>3</td><td>3.3</td></tr>
+          </tbody>
+        </table>
+      </figure>
+    </article>
   </main>
 </body>
 

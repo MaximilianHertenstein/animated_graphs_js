@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="shared-app.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uplot@1.6.24/dist/uPlot.min.css">
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="shared-power.js"></script>
 </head>
 <body>
   <main class="app">
@@ -28,18 +29,14 @@
     const plotEl = document.getElementById("plot");
     let u;
 
-    const ticks = (u, i, min, max) => {
-      const t = [];
-      for (let v = -5; v <= 5; v++) if (v >= min && v <= max) t.push(v);
-      return t;
-    };
+    const ticks = (u, i, min, max) => PowerShared.TICKS.filter((v) => v >= min && v <= max);
 
     function data(a, n) {
       const xs = [];
       const ys = [];
       for (let i = 0; i <= 3000; i++) {
         const x = -5 + (10 * i / 3000);
-        const y = a * Math.pow(Math.abs(x), n) * (x < 0 && n % 2 !== 0 ? -1 : 1);
+        const y = PowerShared.powerY(a, n, x);
         xs.push(x);
         ys.push(Number.isFinite(y) ? y : null);
       }
@@ -80,14 +77,8 @@
     }
 
     function render() {
-      const a = parseFloat(aS.value);
-      const n = parseInt(nS.value, 10);
-      aOut.textContent = a.toFixed(1);
-      nOut.textContent = String(n);
-      formula.innerHTML = `\\(f(x)=${a.toFixed(1)}\\cdot x^{${n}}\\)`;
-      if (window.MathJax && MathJax.typesetPromise) {
-        MathJax.typesetPromise([formula]).catch(() => {});
-      }
+      const { a, n } = PowerShared.getParams(aS, nS, aOut, nOut);
+      PowerShared.updatePowerFormula(formula, a, n);
       if (!u) u = new uPlot(opts(), data(a, n), plotEl);
       else u.setData(data(a, n));
     }

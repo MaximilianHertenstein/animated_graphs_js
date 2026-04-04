@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="shared-app.css">
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="shared-power.js"></script>
   <style>
     #plot .plot-container,
     #plot .svg-container {
@@ -48,7 +49,7 @@
       const y = [];
       for (let i = 0; i <= 3000; i++) {
         const xv = -5 + (10 * i / 3000);
-        const yv = a * Math.pow(Math.abs(xv), n) * (xv < 0 && n % 2 !== 0 ? -1 : 1);
+        const yv = PowerShared.powerY(a, n, xv);
         x.push(xv);
         y.push(yv);
       }
@@ -58,24 +59,17 @@
     function render() {
       if (typeof Plotly === 'undefined') return;
 
-      const a = parseFloat(aS.value);
-      const n = parseInt(nS.value, 10);
-      aO.textContent = a.toFixed(1);
-      nO.textContent = String(n);
-      formula.innerHTML = `\\(f(x)=${a.toFixed(1)}\\cdot x^{${n}}\\)`;
-      if (window.MathJax && MathJax.typesetPromise) {
-        MathJax.typesetPromise([formula]).catch(() => {});
-      }
+      const { a, n } = PowerShared.getParams(aS, nS, aO, nO);
+      PowerShared.updatePowerFormula(formula, a, n);
 
       const v = data(a, n);
-      const ticks = [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5];
       Plotly.react('plot', [{ x: v.x, y: v.y, mode: 'lines', line: { color: '#5eead4', width: 3 }, hoverinfo: 'skip' }], {
         autosize: true,
         paper_bgcolor: '#121826',
         plot_bgcolor: '#121826',
         margin: { l: 56, r: 24, t: 24, b: 40 },
-        xaxis: { range: [-5, 5], tickvals: ticks, gridcolor: 'rgba(255,255,255,.15)', zeroline: true, zerolinecolor: '#f6f8fb', tickfont: { color: '#d7dfeb' } },
-        yaxis: { range: [-5, 5], tickvals: ticks, gridcolor: 'rgba(255,255,255,.15)', zeroline: true, zerolinecolor: '#f6f8fb', tickfont: { color: '#d7dfeb' } },
+        xaxis: { range: [-5, 5], tickvals: PowerShared.TICKS, gridcolor: 'rgba(255,255,255,.15)', zeroline: true, zerolinecolor: '#f6f8fb', tickfont: { color: '#d7dfeb' } },
+        yaxis: { range: [-5, 5], tickvals: PowerShared.TICKS, gridcolor: 'rgba(255,255,255,.15)', zeroline: true, zerolinecolor: '#f6f8fb', tickfont: { color: '#d7dfeb' } },
         showlegend: false
       }, { displayModeBar: false, responsive: true });
     }

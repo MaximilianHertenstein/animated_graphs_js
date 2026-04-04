@@ -6,6 +6,7 @@
   <title>Power Function (Canvas)</title>
   <link rel="stylesheet" href="shared-app.css">
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="shared-power.js"></script>
 </head>
 <body>
   <main class="app">
@@ -39,14 +40,8 @@
     const ty = (y, h, p) => h - p - ((y + 5) / 10) * (h - 2 * p);
 
     function draw() {
-      const a = parseFloat(aS.value);
-      const n = parseInt(nS.value, 10);
-      aO.textContent = a.toFixed(1);
-      nO.textContent = String(n);
-      formula.innerHTML = `\\(f(x)=${a.toFixed(1)}\\cdot x^{${n}}\\)`;
-      if (window.MathJax && MathJax.typesetPromise) {
-        MathJax.typesetPromise([formula]).catch(() => {});
-      }
+      const { a, n } = PowerShared.getParams(aS, nS, aO, nO);
+      PowerShared.updatePowerFormula(formula, a, n);
 
       const w = c.clientWidth;
       const h = c.clientHeight;
@@ -86,7 +81,7 @@
       let first = true;
       for (let i = 0; i <= 4000; i++) {
         const x = -5 + (10 * i / 4000);
-        const y = a * Math.pow(Math.abs(x), n) * (x < 0 && n % 2 !== 0 ? -1 : 1);
+        const y = PowerShared.powerY(a, n, x);
         const px = tx(x, w, p);
         const py = ty(y, h, p);
         if (first) {

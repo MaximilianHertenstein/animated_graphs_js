@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="shared-app.css">
   <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="shared-power.js"></script>
 </head>
 <body>
   <main class="app">
@@ -30,21 +31,15 @@
       const points = [];
       for (let i = 0; i <= 3000; i++) {
         const x = -5 + (10 * i) / 3000;
-        const y = a * Math.pow(Math.abs(x), n) * (x < 0 && n % 2 !== 0 ? -1 : 1);
+        const y = PowerShared.powerY(a, n, x);
         points.push([x, Number.isFinite(y) ? y : null]);
       }
       return points;
     }
 
     function render() {
-      const a = parseFloat(aS.value);
-      const n = parseInt(nS.value, 10);
-      aOut.textContent = a.toFixed(1);
-      nOut.textContent = String(n);
-      formula.innerHTML = `\\(f(x)=${a.toFixed(1)}\\cdot x^{${n}}\\)`;
-      if (window.MathJax && MathJax.typesetPromise) {
-        MathJax.typesetPromise([formula]).catch(() => {});
-      }
+      const { a, n } = PowerShared.getParams(aS, nS, aOut, nOut);
+      PowerShared.updatePowerFormula(formula, a, n);
 
       chart.setOption({
         animation: false,

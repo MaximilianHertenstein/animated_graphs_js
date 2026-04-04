@@ -6,6 +6,7 @@
   <title>Power Function (Observable Plot)</title>
   <link rel="stylesheet" href="shared-app.css">
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="shared-power.js"></script>
 </head>
 <body>
   <main class="app">
@@ -28,24 +29,12 @@
     const el = document.getElementById("plot");
 
     function data(a, n) {
-      const d = [];
-      for (let i = 0; i <= 3000; i++) {
-        const x = -5 + (10 * i / 3000);
-        const y = a * Math.pow(Math.abs(x), n) * (x < 0 && n % 2 !== 0 ? -1 : 1);
-        d.push({ x, y });
-      }
-      return d;
+      return window.PowerShared.samplePoints(a, n, 3000, -5, 5);
     }
 
     function render() {
-      const a = parseFloat(aS.value);
-      const n = parseInt(nS.value, 10);
-      aOut.textContent = a.toFixed(1);
-      nOut.textContent = String(n);
-      formula.innerHTML = `\\(f(x)=${a.toFixed(1)}\\cdot x^{${n}}\\)`;
-      if (window.MathJax && MathJax.typesetPromise) {
-        MathJax.typesetPromise([formula]).catch(() => {});
-      }
+      const { a, n } = window.PowerShared.getParams(aS, nS, aOut, nOut);
+      window.PowerShared.updatePowerFormula(formula, a, n);
 
       const fig = Plot.plot({
         width: el.clientWidth,
@@ -54,8 +43,8 @@
         marginBottom: 40,
         marginTop: 24,
         marginRight: 24,
-        x: { domain: [-5, 5], ticks: [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5], label: "" },
-        y: { domain: [-5, 5], ticks: [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5], label: "" },
+        x: { domain: [-5, 5], ticks: window.PowerShared.TICKS, label: "" },
+        y: { domain: [-5, 5], ticks: window.PowerShared.TICKS, label: "" },
         style: { background: "#121826", color: "#d7dfeb" },
         marks: [
           Plot.gridX({ stroke: "rgba(255,255,255,0.15)" }),

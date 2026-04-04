@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="shared-app.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css">
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="shared-power.js"></script>
   <style>
     .jxgbox {
       position: relative;
@@ -95,7 +96,7 @@
       }
 
       graph = board.create('functiongraph', [
-        (x) => a * Math.pow(Math.abs(x), n) * (x < 0 && n % 2 !== 0 ? -1 : 1),
+        (x) => PowerShared.powerY(a, n, x),
         -5,
         5
       ], {
@@ -109,15 +110,9 @@
     }
 
     function render() {
-      a = parseFloat(aS.value);
-      n = parseInt(nS.value, 10);
-      aOut.textContent = a.toFixed(1);
-      nOut.textContent = String(n);
-      formula.innerHTML = `\\(f(x)=${a.toFixed(1)}\\cdot x^{${n}}\\)`;
-      if (window.MathJax && MathJax.typesetPromise) {
-        MathJax.typesetPromise([formula]).catch(() => {});
-      }
-      if (graph) graph.Y = (x) => a * Math.pow(Math.abs(x), n) * (x < 0 && n % 2 !== 0 ? -1 : 1);
+      ({ a, n } = PowerShared.getParams(aS, nS, aOut, nOut));
+      PowerShared.updatePowerFormula(formula, a, n);
+      if (graph) graph.Y = (x) => PowerShared.powerY(a, n, x);
       if (board) board.update();
     }
 
