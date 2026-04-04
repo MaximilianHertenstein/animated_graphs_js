@@ -23,9 +23,9 @@
       background: #18181c;
       border: 0.5px solid rgba(255,255,255,0.1);
       border-radius: 14px;
-      padding: 2rem 2.5rem;
+      padding: 2.25rem 2.75rem;
       width: 100%;
-      max-width: 680px;
+      max-width: 980px;
     }
 
     .expr {
@@ -94,7 +94,7 @@
       color: #e8e6e1;
     }
 
-    #plot { width: 100%; min-height: 280px; }
+    #plot { width: 100%; min-height: 460px; }
     #plot .uplot { width: 100% !important; }
   </style>
 </head>
@@ -116,11 +116,6 @@
       <input type="range" id="n" min="-4" max="8" step="0.1" value="2">
       <span class="val" id="n-out">2.0</span>
     </div>
-    <div class="row">
-      <label>x range</label>
-      <input type="range" id="xr" min="1" max="20" step="1" value="5">
-      <span class="val" id="xr-out">±5</span>
-    </div>
   </div>
 
   <div id="plot"></div>
@@ -136,13 +131,13 @@
   }
 </script>
 <script>
-  let uplot, a = 1, n = 2, xRange = 5;
+  let uplot, a = 1, n = 2;
 
   function genData() {
     const pts = 600;
     const xs = [], ys = [];
     for (let i = 0; i <= pts; i++) {
-      const x = -xRange + (2 * xRange * i / pts);
+      const x = -5 + (10 * i / pts);
       // handle negative x with non-integer n: use sign-preserving power
       const y = a * Math.pow(Math.abs(x), n) * (x < 0 && n % 2 !== 0 ? -1 : 1);
       xs.push(x);
@@ -152,27 +147,73 @@
   }
 
   function makeOpts(w) {
-    const grid  = 'rgba(255,255,255,0.07)';
-    const axis  = 'rgba(255,255,255,0.4)';
+    const grid  = 'rgba(255,255,255,0.14)';
+    const axis  = 'rgba(255,255,255,0.55)';
+    const axisLabel = 'rgba(255,255,255,0.8)';
+    const zeroAxis = 'rgba(255,255,255,0.95)';
+    const fixedTicks = (u, scaleMin, scaleMax) => {
+      const vals = [];
+      for (let i = -5; i <= 5; i++) {
+        if (i >= scaleMin && i <= scaleMax) vals.push(i);
+      }
+      return vals;
+    };
     return {
       width: w,
-      height: 280,
+      height: 460,
       padding: [12, 12, 0, 0],
       cursor: { show: true, drag: { x: false, y: false } },
       legend: { show: false },
+      hooks: {
+        draw: [
+          (u) => {
+            const ctx = u.ctx;
+            const x0 = u.valToPos(0, 'x', true);
+            const y0 = u.valToPos(0, 'y', true);
+
+            ctx.save();
+            ctx.strokeStyle = zeroAxis;
+            ctx.lineWidth = 1.4;
+
+            // x-axis (y = 0)
+            ctx.beginPath();
+            ctx.moveTo(u.bbox.left, y0);
+            ctx.lineTo(u.bbox.left + u.bbox.width, y0);
+            ctx.stroke();
+
+            // y-axis (x = 0)
+            ctx.beginPath();
+            ctx.moveTo(x0, u.bbox.top);
+            ctx.lineTo(x0, u.bbox.top + u.bbox.height);
+            ctx.stroke();
+
+            ctx.restore();
+          }
+        ]
+      },
       axes: [
         {
-          stroke: axis,
+          stroke: axisLabel,
           grid:  { stroke: grid, width: 0.5 },
-          ticks: { show: false },
-          font:  '12px monospace',
+          ticks: { show: true, stroke: axis, size: 6, width: 1 },
+          values: fixedTicks,
+          font:  '13px monospace',
+          space: 36,
+          gap: 8,
+          labelGap: 10,
+          labelSize: 0,
         },
         {
-          stroke: axis,
+          stroke: axisLabel,
           grid:  { stroke: grid, width: 0.5 },
-          ticks: { show: false },
-          font:  '12px monospace',
+          ticks: { show: true, stroke: axis, size: 6, width: 1 },
+          values: fixedTicks,
+          font:  '13px monospace',
           size: 56,
+          space: 36,
+          gap: 8,
+          labelGap: 10,
+          labelSize: 0,
         }
       ],
       series: [
@@ -183,13 +224,17 @@
           fill: 'transparent',
           spanGaps: false,
         }
-      ]
+      ],
+      scales: {
+        x: { auto: false, range: () => [-5, 5] },
+        y: { auto: false, range: () => [-5, 5] },
+      }
     };
   }
 
   function initPlot() {
     const el = document.getElementById('plot');
-    const w  = el.offsetWidth || 600;
+    const w  = el.offsetWidth || 900;
     const [xs, ys] = genData();
     if (uplot) uplot.destroy();
     uplot = new uPlot(makeOpts(w), [xs, ys], el);
@@ -217,12 +262,6 @@
     updateExpr(); updatePlot();
   });
 
-  document.getElementById('xr').addEventListener('input', e => {
-    xRange = parseInt(e.target.value);
-    document.getElementById('xr-out').textContent = '±' + xRange;
-    updatePlot();
-  });
-
   function start() {
     if (typeof uPlot !== 'function') {
       document.getElementById('plot').textContent = 'Graph library failed to load.';
@@ -238,7 +277,7 @@
   }
 
   window.addEventListener('resize', () => {
-    if (uplot) uplot.setSize({ width: document.getElementById('plot').offsetWidth, height: 280 });
+    if (uplot) uplot.setSize({ width: document.getElementById('plot').offsetWidth, height: 460 });
   });
 </script>
 
