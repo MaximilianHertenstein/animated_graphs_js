@@ -1,178 +1,68 @@
 <!doctype html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Power Function (Unovis)</title>
-  <link rel="stylesheet" href="shared-app.css">
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-  <script src="shared-power.js"></script>
-  <style>
-    #plot {
-      position: relative;
-    }
-
-    #grid {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    .grid-line {
-      position: absolute;
-      background: rgba(255, 255, 255, 0.18);
-    }
-
-    .grid-line.x {
-      top: 0;
-      width: 1px;
-      height: 100%;
-      transform: translateX(-0.5px);
-    }
-
-    .grid-line.y {
-      left: 0;
-      width: 100%;
-      height: 1px;
-      transform: translateY(-0.5px);
-    }
-
-    #uv {
-      position: absolute;
-      inset: 0;
-      z-index: 2;
-    }
-
-    #labels {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      z-index: 3;
-      color: #d7dfeb;
-      font-size: 12px;
-    }
-
-    .tick-label {
-      position: absolute;
-      line-height: 1;
-      white-space: nowrap;
-    }
-
-    .tick-label.x {
-      transform: translate(-50%, 6px);
-    }
-
-    .tick-label.y {
-      transform: translate(calc(-100% - 6px), -50%);
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Power Function (Unovis)</title>
+<link rel="stylesheet" href="shared-app.css">
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script src="shared-power.js"></script>
 </head>
 <body>
-  <main class="app">
-    <section class="controls">
-      <div class="row"><label for="a">a</label><input id="a" type="range" min="-5" max="5" step="0.1" value="1"><output id="aOut">1.0</output></div>
-      <div class="row"><label for="n">n</label><input id="n" type="range" min="-4" max="8" step="1" value="2"><output id="nOut">2</output></div>
-    </section>
-    <div id="formula" class="formula">\(f(x)=1.0\cdot x^{2}\)</div>
-    <div id="plot" class="plot-surface"><div id="grid"></div><div id="uv"></div><div id="labels"></div></div>
-  </main>
+<main class="app">
+  <section class="controls">
+    <div class="row"><label for="a">a</label><input id="a" type="range" min="-5" max="5" step="0.1" value="1"><output id="aOut">1.0</output></div>
+    <div class="row"><label for="n">n</label><input id="n" type="range" min="-4" max="8" step="1" value="2"><output id="nOut">2</output></div>
+  </section>
+  <div id="formula" class="formula">\(f(x)=1.0\cdot x^{2}\)</div>
+  <div id="plot" class="plot-surface"></div>
+</main>
+<script type="module">
+import { XYContainer, Axis, Line, Plotline } from "https://cdn.jsdelivr.net/npm/@unovis/ts@1.6.4/+esm";
 
-  <script type="module">
-    import { XYContainer, Line, Plotline } from "https://cdn.jsdelivr.net/npm/@unovis/ts@1.6.4/+esm";
+const shared = window.PowerShared;
+const { X_MIN, X_MAX, Y_MIN, Y_MAX } = shared;
+const ui = shared.getPowerUI("plot");
 
-    const shared = window.PowerShared;
-    const { X_MIN, X_MAX, Y_MIN, Y_MAX } = shared;
-    const ui = shared.getPowerUI("plot");
-    const gridHost = document.getElementById("grid");
-    const unovisHost = document.getElementById("uv");
-    const labelsHost = document.getElementById("labels");
-    const SAMPLE_STEPS = 1200;
-    const EPS = 0.001;
-    let chart;
+const range = (from, to) => Array.from({ length: to - from + 1 }, (_, i) => from + i);
+const ticks = range(Math.ceil(X_MIN), Math.floor(X_MAX));
 
-    const makeAxisAtZero = (axis) => new Plotline({ axis, value: 0, color: "#f6f8fb" });
-    const xAxisAtZero = makeAxisAtZero("x");
-    const yAxisAtZero = makeAxisAtZero("y");
+const xGridLines = ticks.map(v => new Plotline({ axis: "x", value: v, color: "rgba(246,248,251,0.35)" }));
+const xAxisAtZero = new Plotline({ axis: "x", value: 0, color: "#f6f8fb" });
+const yAxisAtZero = new Plotline({ axis: "y", value: 0, color: "#f6f8fb" });
+const leftLine  = new Line({ x: d => d.x, y: d => d.yL, color: "#5eead4" });
+const rightLine = new Line({ x: d => d.x, y: d => d.yR, color: "#5eead4" });
 
-    const leftLine = new Line({ x: (d) => d.x, y: (d) => d.yLeft, color: "#5eead4" });
-    const rightLine = new Line({ x: (d) => d.x, y: (d) => d.yRight, color: "#5eead4" });
+const components = [
+  new Axis({ type: "x", tickValues: ticks }),
+  new Axis({ type: "y", tickValues: ticks }),
+  ...xGridLines, xAxisAtZero, yAxisAtZero, leftLine, rightLine
+];
 
-    function renderGrid() {
-      gridHost.innerHTML = [
-        ...shared.TICKS.filter((tick) => tick !== 0).map((tick) => {
-          const left = ((tick - X_MIN) / (X_MAX - X_MIN)) * 100;
-          return `<span class="grid-line x" style="left:${left}%"></span>`;
-        }),
-        ...shared.TICKS.filter((tick) => tick !== 0).map((tick) => {
-          const top = 100 - ((tick - Y_MIN) / (Y_MAX - Y_MIN)) * 100;
-          return `<span class="grid-line y" style="top:${top}%"></span>`;
-        }),
-      ].join("");
-    }
+function buildData(a, n) {
+  const neg = n < 0;
+  return shared.samplePoints(a, n, 1200, X_MIN, X_MAX).map(({ x, y }) => {
+    const v = shared.isVisibleY(y) ? y : undefined;
+    return { x, yL: neg && x > -0.001 ? undefined : v,
+                yR: neg && x <  0.001 ? undefined : v };
+  });
+}
 
-    function renderLabels() {
-      const xZeroPercent = ((0 - X_MIN) / (X_MAX - X_MIN)) * 100;
-      const yZeroPercent = 100 - ((0 - Y_MIN) / (Y_MAX - Y_MIN)) * 100;
+let chart;
+function render() {
+  const { a, n } = shared.syncPowerUI(ui);
+  const data = buildData(a, n);
+  const { clientWidth: w, clientHeight: h } = ui.plotEl;
+  if (!w || !h) return;
+  if (!chart) {
+    chart = new XYContainer(ui.plotEl, { components, xDomain: [X_MIN, X_MAX], yDomain: [Y_MIN, Y_MAX], width: w, height: h }, data);
+  } else {
+    chart.setData(data);
+  }
+}
 
-      labelsHost.innerHTML = [
-        ...shared.TICKS.map((tick) => {
-          const left = ((tick - X_MIN) / (X_MAX - X_MIN)) * 100;
-          const top = tick === 0 ? `calc(${yZeroPercent}% + 10px)` : `${yZeroPercent}%`;
-          return `<span class="tick-label x" style="left:${left}%;top:${top}">${tick}</span>`;
-        }),
-        ...shared.TICKS.filter((tick) => tick !== 0).map((tick) => {
-          const top = 100 - ((tick - Y_MIN) / (Y_MAX - Y_MIN)) * 100;
-          return `<span class="tick-label y" style="left:${xZeroPercent}%;top:${top}%">${tick}</span>`;
-        }),
-      ].join("");
-    }
-
-    function buildData(a, n) {
-      const isNegativeExponent = n < 0;
-
-      return shared.samplePoints(a, n, SAMPLE_STEPS, X_MIN, X_MAX).map(({ x, y }) => {
-        const visibleY = shared.isVisibleY(y) ? y : undefined;
-
-        if (!isNegativeExponent) {
-          return { x, yLeft: visibleY, yRight: undefined };
-        }
-
-        return {
-          x,
-          yLeft: x < -EPS ? visibleY : undefined,
-          yRight: x > EPS ? visibleY : undefined,
-        };
-      });
-    }
-
-    function render() {
-      const { a, n } = shared.syncPowerUI(ui);
-      const data = buildData(a, n);
-      const width = ui.plotEl.clientWidth;
-      const height = ui.plotEl.clientHeight;
-
-      if (!width || !height) return;
-      renderGrid();
-      renderLabels();
-
-      if (!chart) {
-        chart = new XYContainer(unovisHost, {
-          components: [xAxisAtZero, yAxisAtZero, leftLine, rightLine],
-          xDomain: [X_MIN, X_MAX],
-          yDomain: [Y_MIN, Y_MAX],
-          width,
-          height,
-        }, data);
-        return;
-      }
-
-      chart.setData(data);
-    }
-
-    shared.bindPowerUI(ui, render, render);
-
-    render();
-  </script>
+shared.bindPowerUI(ui, render, render);
+render();
+</script>
 </body>
 </html>
