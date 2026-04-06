@@ -18,15 +18,12 @@
     <div id="formula" class="formula">\(f(x)=1.0\cdot x^{2}\)</div>
     <div id="plot" class="plot-surface"></div>
   </main>
-
   <script>
     const ui = PowerShared.getPowerUI("plot");
-
     function buildSegments(a, n) {
       const points = PowerShared.sampleVisiblePoints(a, n, 800);
       const segments = [];
       let segment = [];
-
       for (const point of points) {
         if (point.y === null) {
           if (segment.length > 1) segments.push(segment);
@@ -35,15 +32,12 @@
         }
         segment.push([point.x, point.y]);
       }
-
       if (segment.length > 1) segments.push(segment);
       return segments;
     }
-
     function render() {
       const { a, n } = PowerShared.syncPowerUI(ui);
       ui.plotEl.replaceChildren();
-
       const plot = new plotLine({
         id: "plot",
         width: "100%",
@@ -52,30 +46,25 @@
         x_axis: true,
         y_axis: true,
       });
-
       const graphOpts = {
         color: "#67d6ff",
         drawpoints: false,
         line: "line",
       };
-
       // Keep a fixed plotting window by pinning scale bounds invisibly.
       plot.addGraph("bounds", { line: "none", drawpoints: false });
       plot.addPoints("bounds", [
         [PowerShared.X_MIN, PowerShared.Y_MIN],
         [PowerShared.X_MAX, PowerShared.Y_MAX],
       ]);
-
       const segments = buildSegments(a, n);
       segments.forEach((segment, index) => {
         const graphName = `f${index}`;
         plot.addGraph(graphName, graphOpts);
         plot.addPoints(graphName, segment);
       });
-
       plot.draw();
     }
-
     PowerShared.bindPowerUI(ui, render);
     render();
   </script>

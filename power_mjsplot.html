@@ -17,79 +17,61 @@
     <div id="formula" class="formula">\(f(x)=1.0\cdot x^{2}\)</div>
     <div id="plot" class="plot-surface"></div>
   </main>
-
   <script type="module">
     import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
-
     const ui = window.PowerShared.getPowerUI("plot");
-
     function buildData(a, n) {
       return window.PowerShared.sampleVisiblePoints(a, n, 3000, window.PowerShared.X_MIN, window.PowerShared.X_MAX);
     }
-
     function render() {
       const { a, n } = window.PowerShared.syncPowerUI(ui);
-
       const w = ui.plotEl.clientWidth;
       const h = ui.plotEl.clientHeight;
       const m = { l: 56, r: 24, t: 24, b: 40 };
       const iw = w - m.l - m.r;
       const ih = h - m.t - m.b;
-
       const x = d3.scaleLinear().domain([window.PowerShared.X_MIN, window.PowerShared.X_MAX]).range([0, iw]);
       const y = d3.scaleLinear().domain([window.PowerShared.Y_MIN, window.PowerShared.Y_MAX]).range([ih, 0]);
-
       const svg = d3.create("svg")
         .attr("viewBox", `0 0 ${w} ${h}`)
         .attr("width", w)
         .attr("height", h)
         .style("background", "#121826");
-
       const g = svg.append("g").attr("transform", `translate(${m.l},${m.t})`);
       const ticks = window.PowerShared.TICKS;
-
       ticks.forEach(v => {
         g.append("line").attr("x1", x(v)).attr("x2", x(v)).attr("y1", 0).attr("y2", ih).attr("stroke", "rgba(255,255,255,.15)");
         g.append("line").attr("x1", 0).attr("x2", iw).attr("y1", y(v)).attr("y2", y(v)).attr("stroke", "rgba(255,255,255,.15)");
       });
-
       const line = d3.line()
         .defined((p) => p.y !== null)
         .x((p) => x(p.x))
         .y((p) => y(p.y));
-
       g.append("path")
         .datum(buildData(a, n))
         .attr("fill", "none")
         .attr("stroke", "#5eead4")
         .attr("stroke-width", 3)
         .attr("d", line);
-
       g.append("g")
         .attr("transform", `translate(0,${y(0)})`)
         .call(d3.axisBottom(x).tickValues(ticks));
-
       g.append("g")
         .attr("transform", `translate(${x(0)},0)`)
         .call(d3.axisLeft(y).tickValues(ticks));
-
       g.append("line")
         .attr("x1", x(window.PowerShared.X_MIN)).attr("x2", x(window.PowerShared.X_MAX))
         .attr("y1", y(0)).attr("y2", y(0))
         .attr("stroke", "#f6f8fb").attr("stroke-width", 2);
-
       g.append("line")
         .attr("x1", x(0)).attr("x2", x(0))
         .attr("y1", y(window.PowerShared.Y_MIN)).attr("y2", y(window.PowerShared.Y_MAX))
         .attr("stroke", "#f6f8fb").attr("stroke-width", 2);
-
       g.selectAll(".tick text")
         .attr("fill", "#d7dfeb")
         .attr("font-size", "12px");
-
       ui.plotEl.replaceChildren(svg.node());
     }
-
     window.PowerShared.bindPowerUI(ui, render);
     render();
   </script>

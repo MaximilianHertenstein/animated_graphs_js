@@ -18,11 +18,9 @@
     <div id="formula" class="formula">\(f(x)=1.0\cdot x^{2}\)</div>
     <canvas id="chart" class="plot-surface"></canvas>
   </main>
-
   <script>
     const ui = PowerShared.getPowerUI('chart');
     const ctx = ui.plotEl.getContext('2d');
-
     function data(a, n) {
       const points = [];
       for (let i = 0; i <= 2000; i++) {
@@ -32,7 +30,6 @@
       }
       return points;
     }
-
     const chart = new Chart(ctx, {
       type: 'line',
       data: { datasets: [{ data: [], borderColor: '#5eead4', borderWidth: 3, pointRadius: 0 }] },
@@ -62,13 +59,11 @@
         }
       }
     });
-
     function render() {
       const { a, n } = PowerShared.syncPowerUI(ui);
       chart.data.datasets[0].data = data(a, n);
       chart.update();
     }
-
     PowerShared.bindPowerUI(ui, render, null);
     render();
   </script>

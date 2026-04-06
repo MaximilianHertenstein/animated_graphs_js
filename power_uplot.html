@@ -18,18 +18,15 @@
     <div id="formula" class="formula">\(f(x)=1.0\cdot x^{2}\)</div>
     <div id="plot" class="plot-surface"></div>
   </main>
-
   <script src="https://cdn.jsdelivr.net/npm/uplot@1.6.24/dist/uPlot.iife.min.js"></script>
   <script>
     const ui = PowerShared.getPowerUI("plot");
     let u;
-
     function data(a, n) {
       const points = PowerShared.sampleVisiblePoints(a, n, 3000);
       const { x, y } = PowerShared.toXYArrays(points);
       return [x, y];
     }
-
     function opts() {
       const ax = {
         stroke: "#d7dfeb",
@@ -64,13 +61,11 @@
         series: [{}, { stroke: "#5eead4", width: 3 }]
       };
     }
-
     function render() {
       const { a, n } = PowerShared.syncPowerUI(ui);
       if (!u) u = new uPlot(opts(), data(a, n), ui.plotEl);
       else u.setData(data(a, n));
     }
-
     PowerShared.bindPowerUI(ui, render, () => {
       if (!u) return;
       u.setSize({ width: ui.plotEl.clientWidth, height: ui.plotEl.clientHeight });

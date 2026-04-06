@@ -1,6 +1,5 @@
 <!doctype html>
 <html lang="de">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,7 +9,6 @@
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   <script src="shared-power.js"></script>
 </head>
-
 <body>
   <main class="app">
     <section class="controls">
@@ -22,15 +20,12 @@
     <div id="formula" class="formula">\(f(x)=1.0\cdot x^{2}\)</div>
     <div id="chart" class="plot-surface"></div>
   </main>
-
   <script>
     const ui = PowerShared.getPowerUI("chart");
     const chart = echarts.init(ui.plotEl);
-
     function series(a, n) {
       return PowerShared.sampleVisiblePoints(a, n, 3000).map((point) => [point.x, point.y]);
     }
-
     function render() {
       const { a, n } = PowerShared.syncPowerUI(ui);
       chart.setOption({
@@ -50,10 +45,8 @@
         series: [{ type: "line", data: series(a, n), showSymbol: false, lineStyle: { width: 3, color: "#5eead4" } }]
       }, true);
     }
-
     PowerShared.bindPowerUI(ui, render, () => chart.resize());
     render();
   </script>
 </body>
-
 </html>

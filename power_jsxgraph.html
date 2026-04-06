@@ -1,6 +1,5 @@
 <!doctype html>
 <html lang="de">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,7 +16,6 @@
   </style>
   <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
 </head>
-
 <body>
   <main class="app">
     <section class="controls">
@@ -31,44 +29,38 @@
   </main>
   <script>
     const ui = PowerShared.getPowerUI('box');
-    let a = 1;
-    let n = 2;
-    let board;
-    let graph;
-    function boot() {
-      if (typeof JXG === 'undefined') {
-        ui.plotEl.textContent = 'JSXGraph konnte nicht geladen werden.';
-        return;
-      }
-      board = JXG.JSXGraph.initBoard('box', {
+    if (typeof JXG === 'undefined') {
+      ui.plotEl.textContent = 'JSXGraph konnte nicht geladen werden.';
+    } else {
+      const state = { a: 1, n: 2 };
+      const board = JXG.JSXGraph.initBoard('box', {
         boundingbox: [PowerShared.X_MIN, PowerShared.Y_MAX, PowerShared.X_MAX, PowerShared.Y_MIN],
         keepAspectRatio: true,
         axis: true,
         grid: true,
-
       });
-      if (board.defaultAxes?.x) board.defaultAxes.x.setAttribute({ strokeColor: '#f6f8fb', strokeWidth: 1.5 });
-      if (board.defaultAxes?.y) board.defaultAxes.y.setAttribute({ strokeColor: '#f6f8fb', strokeWidth: 1.5 });
-      graph = board.create('functiongraph', [
-        // Read current parameters on every evaluation; no data array needed.
-        (x) => PowerShared.powerY(a, n, x),
+      for (const axis of ['x', 'y']) {
+        board.defaultAxes?.[axis]?.setAttribute({ strokeColor: '#f6f8fb', strokeWidth: 1.5 });
+      }
+      board.create('functiongraph', [
+        (x) => PowerShared.powerY(state.a, state.n, x),
         PowerShared.X_MIN,
-        PowerShared.X_MAX
+        PowerShared.X_MAX,
       ], {
-        strokeWidth: 3
+        strokeWidth: 3,
+        strokeColor: '#5eead4',
       });
-      board.resizeContainer(ui.plotEl.clientWidth, ui.plotEl.clientHeight, true);
+      function resizeBoard() {
+        board.resizeContainer(ui.plotEl.clientWidth, ui.plotEl.clientHeight, true);
+      }
+      function render() {
+        Object.assign(state, PowerShared.syncPowerUI(ui));
+        board.update();
+      }
+      PowerShared.bindPowerUI(ui, render, resizeBoard);
+      resizeBoard();
       render();
     }
-    function render() {
-      ({ a, n } = PowerShared.syncPowerUI(ui));
-      if (board) board.update();
-    }
-    PowerShared.bindPowerUI(ui, render, () => {
-      if (board) board.resizeContainer(ui.plotEl.clientWidth, ui.plotEl.clientHeight, true);
-    });
-    boot();
   </script>
 </body>
-
 </html>

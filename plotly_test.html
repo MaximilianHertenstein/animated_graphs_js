@@ -18,22 +18,17 @@
     <div id="formula" class="formula">\(f(x)=1.0\cdot x^{2}\)</div>
     <div id="plot" class="plot-surface"></div>
   </main>
-
   <script>
     const ui = PowerShared.getPowerUI('plot');
-
     function data(a, n) {
       return PowerShared.toXYArrays(PowerShared.sampleVisiblePoints(a, n, 3000));
     }
-
     function render() {
       if (typeof Plotly === 'undefined' || !Plotly.react) {
         ui.plotEl.textContent = 'Plotly konnte nicht geladen werden.';
         return;
       }
-
       const { a, n } = PowerShared.syncPowerUI(ui);
-
       const v = data(a, n);
       Plotly.react('plot',
         [{ x: v.x, y: v.y, mode: 'lines', type: 'scatter', name: '', line: { color: '#5eead4', width: 4 }, hoverinfo: 'skip' }],
@@ -71,11 +66,9 @@
         { displayModeBar: false, responsive: true }
       );
     }
-
     PowerShared.bindPowerUI(ui, render, () => {
       if (typeof Plotly !== 'undefined' && Plotly.Plots?.resize) Plotly.Plots.resize(ui.plotEl);
     });
-
     render();
   </script>
 </body>

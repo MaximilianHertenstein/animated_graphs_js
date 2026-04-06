@@ -12,16 +12,13 @@
     #plot :is(.x.axis path, .y.axis path, .x.axis .tick line, .y.axis .tick line) {
       stroke: #f6f8fb;
     }
-
     #plot :is(.x.axis .tick text, .y.axis .tick text) {
       fill: #d7dfeb;
       font-size: 12px;
     }
-
     #plot .grid line {
       stroke: rgba(255, 255, 255, 0.22);
     }
-
     #plot .origin {
       stroke: #f6f8fb;
       stroke-width: 2;
@@ -37,14 +34,11 @@
     <div id="formula" class="formula">\(f(x)=1.0\cdot x^{2}\)</div>
     <div id="plot" class="plot-surface"></div>
   </main>
-
   <script>
     const ui = PowerShared.getPowerUI('plot');
-
     function buildData(a, n) {
       const fn = PowerShared.buildPowerMathTerm(a, n);
       const color = '#5eead4';
-
       if (n < 0) {
         const eps = 0.0001;
         return [
@@ -60,20 +54,15 @@
           },
         ];
       }
-
       return [{ fn, color }];
     }
-
     function render() {
       const { a, n } = PowerShared.syncPowerUI(ui);
-
       if (typeof functionPlot !== 'function') {
         ui.plotEl.textContent = 'function-plot konnte nicht geladen werden.';
         return;
       }
-
       ui.plotEl.replaceChildren();
-
       functionPlot({
         target: '#plot',
         width: ui.plotEl.clientWidth,
@@ -93,7 +82,6 @@
         data: buildData(a, n),
       });
     }
-
     PowerShared.bindPowerUI(ui, render);
     render();
   </script>

@@ -17,7 +17,6 @@
     <div id="formula" class="formula">\(f(x)=1.0\cdot 1.0^{x}+0.0\)</div>
     <svg id="plot" class="plot-surface" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid meet"></svg>
   </main>
-
   <script>
     const s = document.getElementById('plot');
     const aS = document.getElementById('a');
@@ -27,20 +26,16 @@
     const qO = document.getElementById('qOut');
     const cO = document.getElementById('cOut');
     const formula = document.getElementById('formula');
-
     const min = -5;
     const max = 5;
     const p = 60;
-
     const createSvgEl = (tag, attrs) => {
       const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
       Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
       return el;
     };
-
     const tx = (x, w) => p + ((x - min) / (max - min)) * (w - 2 * p);
     const ty = (y, h) => h - p - ((y - min) / (max - min)) * (h - 2 * p);
-
     function render() {
       const a = parseFloat(aS.value);
       const q = parseFloat(qS.value);
@@ -52,13 +47,11 @@
       if (window.MathJax && MathJax.typesetPromise) {
         MathJax.typesetPromise([formula]).catch(() => {});
       }
-
       const w = s.clientWidth || 800;
       const h = s.clientHeight || 600;
       s.setAttribute('viewBox', `0 0 ${w} ${h}`);
       s.setAttribute('preserveAspectRatio', 'xMidYMid meet');
       s.replaceChildren();
-
       for (let i = -5; i <= 5; i++) {
         s.appendChild(createSvgEl('line', {
           x1: tx(i, w), y1: p, x2: tx(i, w), y2: h - p,
@@ -69,7 +62,6 @@
           stroke: 'rgba(255,255,255,.15)'
         }));
       }
-
       s.appendChild(createSvgEl('line', {
         x1: p, y1: ty(0, h), x2: w - p, y2: ty(0, h),
         stroke: '#f6f8fb', 'stroke-width': '2'
@@ -78,7 +70,6 @@
         x1: tx(0, w), y1: p, x2: tx(0, w), y2: h - p,
         stroke: '#f6f8fb', 'stroke-width': '2'
       }));
-
       let pts = "";
       for (let i = 0; i <= 1000; i++) {
         const x = min + ((max - min) * i) / 1000;
@@ -92,7 +83,6 @@
         'stroke-width': '3'
       }));
     }
-
     aS.addEventListener('input', render);
     qS.addEventListener('input', render);
     cS.addEventListener('input', render);

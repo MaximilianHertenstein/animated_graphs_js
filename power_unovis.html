@@ -19,35 +19,29 @@
 </main>
 <script type="module">
 import { XYContainer, Axis, Line, Plotline } from "https://cdn.jsdelivr.net/npm/@unovis/ts@1.6.4/+esm";
-
 const shared = window.PowerShared;
 const { X_MIN, X_MAX, Y_MIN, Y_MAX } = shared;
 const ui = shared.getPowerUI("plot");
-
-const range = (from, to) => Array.from({ length: to - from + 1 }, (_, i) => from + i);
-const ticks = range(Math.ceil(X_MIN), Math.floor(X_MAX));
-
+const ticks = shared.TICKS;
+const EPS = 0.001;
 const xGridLines = ticks.map(v => new Plotline({ axis: "x", value: v, color: "rgba(246,248,251,0.35)" }));
 const xAxisAtZero = new Plotline({ axis: "x", value: 0, color: "#f6f8fb" });
 const yAxisAtZero = new Plotline({ axis: "y", value: 0, color: "#f6f8fb" });
 const leftLine  = new Line({ x: d => d.x, y: d => d.yL, color: "#5eead4" });
 const rightLine = new Line({ x: d => d.x, y: d => d.yR, color: "#5eead4" });
-
 const components = [
   new Axis({ type: "x", tickValues: ticks }),
   new Axis({ type: "y", tickValues: ticks }),
   ...xGridLines, xAxisAtZero, yAxisAtZero, leftLine, rightLine
 ];
-
 function buildData(a, n) {
   const neg = n < 0;
   return shared.samplePoints(a, n, 1200, X_MIN, X_MAX).map(({ x, y }) => {
     const v = shared.isVisibleY(y) ? y : undefined;
-    return { x, yL: neg && x > -0.001 ? undefined : v,
-                yR: neg && x <  0.001 ? undefined : v };
+    return { x, yL: neg && x > -EPS ? undefined : v,
+                yR: neg && x <  EPS ? undefined : v };
   });
 }
-
 let chart;
 function render() {
   const { a, n } = shared.syncPowerUI(ui);
@@ -60,7 +54,6 @@ function render() {
     chart.setData(data);
   }
 }
-
 shared.bindPowerUI(ui, render, render);
 render();
 </script>
